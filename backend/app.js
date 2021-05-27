@@ -1,16 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-//const userRoutes = require('./routes/user');
-//const saucesRoutes = require('./routes/sauces');
 const path = require('path');
 const app = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+const User = require('./models').User;
+const Message = require('./models').Message;
 
+const userRoutes = require('./routes/user.routes');
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-// Ajoute les en-têtes sur chaque requête
+// Ajoute les en-têtes sur res
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
@@ -18,13 +20,19 @@ app.use((req, res, next) => {
     next();
 });
 
-// Routes auth et sauces
-//app.use('/api/auth', userRoutes);
-//app.use('/api/sauces', saucesRoutes);
+//routes
+app.use('/api/user', userRoutes);
+//app.use('/api/post', postRoutes);
+//app.use('/api/comment', commentRoutes);
 
-//test route
-app.get("/", (req, res) => {
-    res.json({ message: "Test message pour toutes les routes" });
+/* User.create({
+    email: "mathieu2@test.fr",
+    password : "TestPassword"
+}).then(user => {
+    user.createMessage({
+        content :"ojnviruvifuvir"
+    }).then(() => console.log('Worked !'));
 });
+ */
 
 module.exports = app;
