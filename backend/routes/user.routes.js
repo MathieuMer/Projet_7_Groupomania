@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const userCtrl = require('../controllers/user.controllers');
-const passwordValidator = require("../middlewares/passwordValidator");
 
 //routes users
 router.post('/signup', userCtrl.signup); // Create account
 router.post('/login', userCtrl.login); // Login
-router.put('/login', userCtrl.update); // Update profil
+router.get('/me', userCtrl.getUserProfile); // Voir son profil
+router.put('/me', userCtrl.updateUserProfile); // Mettre à jour son profil
 
 module.exports = router;

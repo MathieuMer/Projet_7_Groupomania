@@ -7,6 +7,7 @@ const User = require('./models').User;
 const Message = require('./models').Message;
 
 const userRoutes = require('./routes/user.routes');
+const messageRoutes = require('./routes/message.routes');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
@@ -22,7 +23,7 @@ app.use((req, res, next) => {
 
 //routes
 app.use('/api/user', userRoutes);
-//app.use('/api/post', postRoutes);
+app.use('/api/message', messageRoutes);
 //app.use('/api/comment', commentRoutes);
 
 /* User.create({

@@ -19,6 +19,13 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Message.init({
+    userId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Users',
+        key: 'id'
+      }
+    },
     content: {
       type: DataTypes.TEXT,
       allowNull: false,
