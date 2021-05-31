@@ -1,12 +1,16 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('messages', {
+    await queryInterface.createTable('comments', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
+      },
+      content: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       userId: {
         type: Sequelize.INTEGER,
@@ -17,12 +21,14 @@ module.exports = {
           key: 'id'
         }
       },
-      content: {
-        type: Sequelize.TEXT,
+      messageId: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-      },
-      imageurl: {
-        type: Sequelize.STRING
+        onDelete: 'CASCADE',
+        references: {
+          model: 'Messages',
+          key: 'id'
+        }
       },
       createdAt: {
         allowNull: false,
@@ -35,6 +41,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('messages');
+    await queryInterface.dropTable('comments');
   }
 };

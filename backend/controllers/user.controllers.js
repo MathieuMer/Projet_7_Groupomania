@@ -2,32 +2,29 @@
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto-js');
 const User = require('../models').User;
-const jwtMiddleware = require('../middlewares/auth')
+const Message = require('../models').Message;
+const jwt = require('jsonwebtoken');
 
 //REGEX Models
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 const PASSWORD_REGEX = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{6,}$/
 
-//Routes
+//Controllers
 exports.signup = (req, res, next) => {
     // Récuperation de l'email et du password
     const email = req.body.email;
     const password = req.body.password;
-
     // Verifier si la requête n'est pas nulle
     if (email == null || password == null) {
         return res.status(400).send({ message: "Les champs Email et Password ne doivent pas être vides" });
     };
-
     // Vérification REGEX pour Email et Password
     if (!EMAIL_REGEX.test(email)) {
         return res.status(400).send({ message: "Format de l'email incorrect" });
     };
-
     if (!PASSWORD_REGEX.test(password)) {
         return res.status(400).send({ message: "Format du mot de passe incorrect" });
     };
-
     // Vérifier si l'email existe déjà
     User.findOne({
         attributes: ["email"],
@@ -56,19 +53,19 @@ exports.login = (req, res, next) => {
     // Récuperation de l'email et du password
     const email = req.body.email;
     const password = req.body.password;
-
+    console.log(password);
     // Chercher l'utilisateur 
     User.findOne({ where: { email: email } })
         .then((Userfound) => {
-            console.log(Userfound);
             bcrypt.compare(password, Userfound.password)
                 .then(valid => {
+                    console.log(valid);
                     if (!valid) {
                         return res.status(401).json({ message: 'Mot de passe incorrect !!!!' });
-                    }
+                    } 
                     res.status(200).json({
-                        userId: Userfound.id,
-                        token: jwtMiddleware.generateNewToken(Userfound.id, Userfound.isAdmin)
+                            userId: Userfound.id,
+                            token: jwt.sign({ userId: Userfound.id, isAdmin: Userfound.isAdmin }, process.env.TOKEN_KEY, { expiresIn: '24h' })
                     });
                 })
                 .catch((err) => res.status(400).send({ message: 'Mot de passe incorrect !' }));
@@ -77,45 +74,28 @@ exports.login = (req, res, next) => {
 };
 
 exports.getUserProfile = (req, res, next) => {
-    // Récuperation de authorization dans les headers de la req et authentification
-    const headerAuth = req.headers['authorization'];
-    const userId = jwtMiddleware.getUserId(headerAuth);
-
-    // Vérification supplémentaire
-    if (userId < 0) {
-        return res.status(400).json({ 'error': 'Mauvais Token' });
-    }
-
+    // Récupérer les infos dans la BDD
     User.findOne({
         attributes: ['id', 'email', 'firstname', 'lastname', 'birthdate', 'bio', 'avatar', 'job'],
-        where: { id: userId }
+        where: { id: res.locals.userId }
     })
     .then((user) => { res.status(200).json({ user }) })
     .catch((err) => res.status(400).send({ message: "Utilisateur non trouvé !" }));
 };
 
 exports.updateUserProfile = (req, res, next) => {
-    // Récuperation de authorization dans les headers de la req et authentification
-    const headerAuth = req.headers['authorization'];
-    userId = jwtMiddleware.getUserId(headerAuth);
-
-    // Vérification supplémentaire
-    if (userId < 0) {
-        return res.status(400).json({ 'error': 'Mauvais Token' });
-    }
-
     // Récuperation des données
-    const email = req.body.email;
     const firstname = req.body.firstname;
     const lastname = req.body.lastname;
     const birthdate = req.body.birthdate;
     const bio = req.body.bio;
-    const avatar = req.body.avatar;
+    const avatar = req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null;
     const job = req.body.job;
+    console.log('Chemin de image : '+ avatar);
 
     User.findOne({
-        attributes: ['id', 'email', 'firstname', 'lastname', 'birthdate', 'bio', 'avatar', 'job'],
-        where: { id: userId }
+        attributes: ['id', 'email', 'firstname', 'lastname', 'birthdate', 'bio', 'avatar', 'job', 'avatar'],
+        where: { id: res.locals.userId }
     })
     .then((User) => {
         User.update({
@@ -124,10 +104,30 @@ exports.updateUserProfile = (req, res, next) => {
             birthdate: (birthdate ? birthdate : User.birthdate),
             avatar: (avatar ? avatar : User.avatar),
             job: (job ? job : User.job),
-            bio: (bio ? bio : User.bio)
+            bio: (bio ? bio : User.bio),
+            avatar: (avatar ? avatar : User.avatar)
         })
-        .then((User) => { res.status(200).json({ User }) })
-        .catch((err) => res.status(400).send({ message: "Utilisateur non trouvé !" }));
+        .then((User) => { res.status(201).json({ User }) })
+        .catch((err) => res.status(500).send({ message: "Erreur lors de la mise à jour de profil" }));
     })
     .catch((err) => res.status(400).send({ message: "Utilisateur non trouvé !" }));
+}
+
+exports.deleteUserProfile = (req, res, next) => {
+    const password = req.body.password;
+    // Chercher l'utilisateur 
+    User.findOne({ where: { id: res.locals.userId } })
+        .then((Userfound) => {
+            bcrypt.compare(password, Userfound.password)
+                .then(valid => {
+                    if (!valid) {
+                        return res.status(401).json({ message: 'Mot de passe incorrect !!!!' });
+                    }
+                    User.destroy({ where: { id: Userfound.id } })
+                        .then(() => res.status(201).json({ message: 'Utilisateur supprimé' }))
+                        .catch(err => res.status(500).json({ err }));
+                })
+                .catch((err) => res.status(400).send({ message: 'Mot de passe incorrect !' }));
+        })
+        .catch((err) => res.status(500).send({ message: "Utilisateur non trouvé !" }));
 };

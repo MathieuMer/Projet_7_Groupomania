@@ -3,11 +3,9 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const app = express();
 
-const User = require('./models').User;
-const Message = require('./models').Message;
-
 const userRoutes = require('./routes/user.routes');
 const messageRoutes = require('./routes/message.routes');
+const commentRoutes = require('./routes/comment.routes');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
@@ -24,16 +22,6 @@ app.use((req, res, next) => {
 //routes
 app.use('/api/user', userRoutes);
 app.use('/api/message', messageRoutes);
-//app.use('/api/comment', commentRoutes);
-
-/* User.create({
-    email: "mathieu2@test.fr",
-    password : "TestPassword"
-}).then(user => {
-    user.createMessage({
-        content :"ojnviruvifuvir"
-    }).then(() => console.log('Worked !'));
-});
- */
+app.use('/api/comment', commentRoutes);
 
 module.exports = app;

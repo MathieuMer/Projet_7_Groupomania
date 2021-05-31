@@ -4,5 +4,29 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"restoreTerminals.terminals": [
+			{
+				"splitTerminals": [
+					{
+						"name": "server",
+						"commands": []
+					},
+					{
+						"name": "CLI",
+						"commands": []
+					},
+				]
+			},
+			{
+				"splitTerminals": [
+					{
+						"name": "MySQL",
+						"commands": [],
+						"shouldRunCommands": false
+					},
+				]
+			}
+		]
+	}
 }
