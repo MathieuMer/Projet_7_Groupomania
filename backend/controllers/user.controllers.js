@@ -14,8 +14,10 @@ exports.signup = (req, res, next) => {
     // Récuperation de l'email et du password
     const email = req.body.email;
     const password = req.body.password;
+    const firstname = req.body.firstname;
+    const lastname = req.body.lastname;
     // Verifier si la requête n'est pas nulle
-    if (email == null || password == null) {
+    if (email == null || password == null || firstname == null || lastname == null) {
         return res.status(400).send({ message: "Les champs Email et Password ne doivent pas être vides" });
     };
     // Vérification REGEX pour Email et Password
@@ -36,6 +38,8 @@ exports.signup = (req, res, next) => {
                 bcrypt.hash(password, 10, function (err, cryptedPassword) {
                     User.create({
                         email: email,
+                        firstname: firstname,
+                        lastname: lastname,
                         password: cryptedPassword
                     })
                         .then(() => res.status(201).send({ message: "Utilisateur créé !" }))

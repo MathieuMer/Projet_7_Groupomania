@@ -1,6 +1,7 @@
 //Imports
 const Message = require('../models').Message;
 const User = require('../models').User;
+const Comment= require('../models').Comment;
 const fs = require('fs');
 
 //Controllers
@@ -34,12 +35,19 @@ exports.getAllMessage = (req, res, next) => {
     // Faire le requêtes des tout les messages, classés par date de création DESC
     Message.findAll({
         order: [(order != null) ? order.split(':') : ['id', 'DESC']],
-        attributes: (fields !== '*' && fields != null) ? fields.split(',') : null,
+        attributes: ['id', 'content', 'imageurl', 'createdAt', 'updatedAt'],
         limit: (!isNaN(limit)) ? limit : null,
         offset: (!isNaN(offset)) ? offset : null,
         include: [{
             model: User,
-            attributes: ['id', 'lastname', 'firstname']
+            attributes: ['id', 'lastname', 'firstname', 'avatar']
+        }, {
+            model: Comment,
+            attributes: ['id', 'content', 'createdAt', 'updatedAt'],
+            include: [{
+                model: User,
+                attributes: ['id', 'lastname', 'firstname', 'avatar']
+            }]
         }]
     })
         .then((messages) => {
