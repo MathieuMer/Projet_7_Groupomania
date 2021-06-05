@@ -57,13 +57,13 @@ exports.login = (req, res, next) => {
     // Récuperation de l'email et du password
     const email = req.body.email;
     const password = req.body.password;
-    console.log(password);
+    console.log("Email :",email," Password :", password);
     // Chercher l'utilisateur 
     User.findOne({ where: { email: email } })
         .then((Userfound) => {
             bcrypt.compare(password, Userfound.password)
                 .then(valid => {
-                    console.log(valid);
+                    console.log("Mot de passe valide :",valid);
                     if (!valid) {
                         return res.status(401).json({ message: 'Mot de passe incorrect !!!!' });
                     } 

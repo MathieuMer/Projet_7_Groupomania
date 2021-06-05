@@ -1,6 +1,8 @@
 // State
 
 export default {
-    Userlogged: '',
+    status: '',
+    userId: -1,
+    token: localStorage.getItem('token') || '',
     messages: []
 }

@@ -1,28 +1,34 @@
 <template>
-   <b-card
-    title="message.user.firstname"
-    img-src="message.imageurl"
-    img-alt="Image"
-    img-top
-    tag="article"
-    style="max-width: 20rem;"
-    class="mb-2"
-  >
-    <b-card-text>
-      {{ message.content }}
-    </b-card-text>
 
-    <b-button href="#" variant="primary">Go somewhere</b-button>
-  </b-card>
+    <b-card
+      :img-src="message.imageurl"
+      img-bottom
+      tag="article"
+      class="mb-2"
+    > 
+      <div class="d-flex">
+        <div>
+          <b-avatar :img-src="message.User.avatar" size="5rem"></b-avatar>
+        </div>
+        <div>
+          <p>{{ message.User.firstname }} {{ message.User.lastname }}</p>
+          <p>{{ message.User.job }}</p>
+          <p>{{ message.createdAt }}</p>
+        </div>
+      </div>
+
+      <b-card-text> {{ message.content }} </b-card-text>
+
+    </b-card>
+
 </template>
 
 <script>
 export default {
-    name: "MessageCard",
-    props: ["message"]
-}
+  name: "MessageCard",
+  props: ["message"],
+};
 </script>
 
 <style>
-
 </style>

@@ -21,7 +21,7 @@
             placeholder="password"
           ></b-form-input>
 
-          <b-button block class="mt-3 mx-auto" type="submit" variant="primary" @click="loginSubmit()"
+          <b-button block class="mt-3 mx-auto" type="submit" variant="primary"
             >Se connecter</b-button
           >
           <p v-if="showError" id="error">Username or Password is incorrect</p>
@@ -50,12 +50,12 @@ export default {
   },
 
   methods: {
-    async loginSubmit() {
-      const User = new FormData();
-      User.append("email", this.form.email);
-      User.append("password", this.form.password);
-      console.log(User);
-      this.$store.dispatch("login", User);
+    loginSubmit(event) {
+      event.preventDefault()
+      console.log(this.form);
+      this.$store.dispatch("login", this.form)
+      .then(() => this.$router.push('/Home'))
+      .catch(err => console.log(err))
     },
   }
 };

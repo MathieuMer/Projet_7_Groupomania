@@ -11,7 +11,7 @@ exports.newMessage = (req, res, next) => {
     const message = {
         UserId: res.locals.userId,
         content: req.body.content,
-        imageurl: req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null
+        imageurl: req.file ? `${req.protocol}://${req.get('host')}/public/images/${req.file.filename}` : null
     }
     // Enregistrer dans la Database
     Message.create(message)
@@ -40,7 +40,7 @@ exports.getAllMessage = (req, res, next) => {
         offset: (!isNaN(offset)) ? offset : null,
         include: [{
             model: User,
-            attributes: ['id', 'lastname', 'firstname', 'avatar']
+            attributes: ['id', 'lastname', 'firstname', 'avatar', 'job']
         }, {
             model: Comment,
             attributes: ['id', 'content', 'createdAt', 'updatedAt'],
