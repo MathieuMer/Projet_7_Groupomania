@@ -1,6 +1,5 @@
 <template>
   <b-container fluid>
-    <HeaderSimple />
     <b-row align-h="center">
       <b-col cols="12">
         <b-form @submit="loginSubmit">
@@ -32,12 +31,12 @@
 </template>
 
 <script>
-import HeaderSimple from '../components/HeaderSimple.vue'
+
 
 export default {
   name: 'Login',
   components: {
-		HeaderSimple
+
 	},
    data() {
     return {
@@ -56,7 +55,7 @@ export default {
       this.$store.dispatch("login", this.form)
       .then(() => this.$router.push('/Home'))
       .catch(err => console.log(err))
-    },
+    }
   }
 };
 </script>

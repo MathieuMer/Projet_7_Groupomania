@@ -26,6 +26,8 @@
               >
             </b-nav-form>
 
+            <b-nav-item to="/">Login</b-nav-item>
+            <b-nav-item to="/signup">Créer un compte</b-nav-item>
             <b-nav-item href="#">Mon profil</b-nav-item>
             <b-nav-item href="#">Logout</b-nav-item>
             
@@ -43,4 +45,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
 </style>

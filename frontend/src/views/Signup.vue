@@ -1,6 +1,5 @@
 <template>
   <b-container fluid>
-    <HeaderSimple />
     <b-col>
       <b-form @submit="signupSubmit">
         <label class="mt-3" for="input-firstname">Prénom :</label>
@@ -42,12 +41,11 @@
 </template>
 
 <script>
-import HeaderSimple from '../components/HeaderSimple.vue'
 
 export default {
     name: 'Signup',
     components: {
-        HeaderSimple
+      
     },
   data() {
     return {

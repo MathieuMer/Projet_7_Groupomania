@@ -30,6 +30,9 @@ export default {
   mounted() {
     this.$store.dispatch("getMessages");
   },
+  created () {
+    console.log("Store.userId: ", this.$store.state.userId, "Store.status: ", this.$store.state.status);
+  }
 };
 </script>
 
