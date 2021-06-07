@@ -1,12 +1,16 @@
 <template>
   <b-container>
     <b-row class="justify-content-center">
+      
       <b-col lg="6">
-          <MessageCard
+        <div>
+          <p>Bienvenue {{ userFirstname }} {{ userLastname }}</p>
+        </div>
+        <MessageCard
         v-for="message in messages"
         :key="message.index"
         :message="message"
-      />
+        />
       </b-col>
     </b-row>
   </b-container>
@@ -14,6 +18,7 @@
 
 <script>
 import MessageCard from "../components/MessageCard.vue";
+import { mapState } from 'vuex';
 
 export default {
   name: "Timeline",
@@ -22,6 +27,8 @@ export default {
   },
 
   computed: {
+    ...mapState(['userFirstname', 'userLastname']),
+
     messages() {
       return this.$store.state.messages;
     },
@@ -29,9 +36,6 @@ export default {
 
   mounted() {
     this.$store.dispatch("getMessages");
-  },
-  created () {
-    console.log("Store.userId: ", this.$store.state.userId, "Store.status: ", this.$store.state.status);
   }
 };
 </script>

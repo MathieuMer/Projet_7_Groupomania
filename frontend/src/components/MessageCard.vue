@@ -1,5 +1,4 @@
 <template>
-
     <b-card
       :img-src="message.imageurl"
       img-bottom
@@ -20,7 +19,6 @@
       <b-card-text> {{ message.content }} </b-card-text>
 
     </b-card>
-
 </template>
 
 <script>

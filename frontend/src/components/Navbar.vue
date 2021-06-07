@@ -15,7 +15,8 @@
 
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
-            <b-nav-form>
+
+            <b-nav-form v-if="this.$store.state.userLogged === true">
               <b-form-input
                 size="sm"
                 class="mr-sm-2"
@@ -26,10 +27,10 @@
               >
             </b-nav-form>
 
-            <b-nav-item to="/">Login</b-nav-item>
-            <b-nav-item to="/signup">Créer un compte</b-nav-item>
-            <b-nav-item href="#">Mon profil</b-nav-item>
-            <b-nav-item href="#">Logout</b-nav-item>
+            <b-nav-item to="Me" v-if="this.$store.state.token.length > 5">Mon profil</b-nav-item>
+            <b-nav-item to="/" v-if="this.$store.state.token.length < 5">Login</b-nav-item>
+            <b-nav-item to="/signup" v-if="this.$store.state.token.length < 5">Créer un compte</b-nav-item>
+            <b-nav-item href="#" v-if="this.$store.state.token.length > 5" @click="logout()">Logout</b-nav-item>
             
           </b-navbar-nav>
         </b-collapse>
@@ -41,7 +42,17 @@
 <script>
 export default {
   name: "Navbar",
+
+  methods: {
+    logout() {
+      this.$store.dispatch("logout")
+      .then(() => this.$router.replace('/'))
+      .catch(err => console.log(err))
+    }
+  }
 };
+
+
 </script>
 
 <style scoped lang="scss">

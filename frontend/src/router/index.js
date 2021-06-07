@@ -4,14 +4,35 @@ import Login from '../views/Login.vue';
 import Signup from '../views/Signup.vue';
 import Home from '../views/Home.vue';
 import Me from '../views/Me.vue';
+import store from '../store';
 
 Vue.use(VueRouter)
+
+// Si User est déjà authenifié alors redirection vers Home
+const ifNotAuthenticated = (to, from, next) => {
+  if (!store.getters.isAuthenticated) {
+    next()
+    return
+  }
+  next('/Home')
+}
+
+const ifAuthenticated = (to, from, next) => {
+  if (store.getters.isAuthenticated) {
+    console.log(store.getters.isAuthenticated)
+    next()
+    return
+  }
+  next('/')
+}
+
 
 const routes = [
   {
     path: '/',
     name: 'Login',
-    component: Login
+    component: Login,
+    beforeEnter: ifNotAuthenticated,
   },
   {
     path: '/signup',
@@ -21,7 +42,8 @@ const routes = [
   {
     path: '/home',
     name: 'Home',
-    component: Home
+    component: Home,
+    beforeEnter: ifAuthenticated
   },
   {
     path: '/me',

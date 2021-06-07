@@ -41,7 +41,6 @@
 </template>
 
 <script>
-
 export default {
     name: 'Signup',
     components: {
@@ -59,9 +58,17 @@ export default {
   },
   methods: {
     signupSubmit(event) {
-      event.preventDefault();
-      alert(JSON.stringify(this.signupForm));
+      event.preventDefault()
+      console.log(this.form);
+      this.$store.dispatch("signup", this.signupForm)
+      .then(() => {
+        this.$store.dispatch("login", this.signupForm)
+        .then(() => this.$router.replace('/Home'))
+        .catch((err) => console.log(err))
+        
+      })
+      .catch(err => console.log(err))
     },
-  },
+  }
 };
 </script>
