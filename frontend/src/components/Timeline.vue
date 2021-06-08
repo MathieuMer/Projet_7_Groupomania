@@ -3,9 +3,6 @@
     <b-row class="justify-content-center">
       
       <b-col lg="6">
-        <div>
-          <p>Bienvenue {{ userFirstname }} {{ userLastname }}</p>
-        </div>
         <MessageCard
         v-for="message in messages"
         :key="message.index"

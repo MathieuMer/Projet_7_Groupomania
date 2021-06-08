@@ -10,10 +10,9 @@ import axios from 'axios';
 Vue.config.productionTip = false
 
 //Réactive le header Authorization
-const storage = JSON.parse(localStorage.getItem('token'));
-if (storage) {
-  console.log(storage.token)
-  axios.defaults.headers.common['Authorization'] = `Bearer ${storage.token}`
+const tokenInLocalstorage = localStorage.getItem('token');
+if (tokenInLocalstorage) {
+  axios.defaults.headers.common['Authorization'] = `Bearer ${tokenInLocalstorage}`
 }
 
 new Vue({

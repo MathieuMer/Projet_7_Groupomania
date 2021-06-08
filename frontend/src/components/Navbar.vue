@@ -27,6 +27,7 @@
               >
             </b-nav-form>
 
+            <b-nav-item to="Home" v-if="this.$store.state.token.length > 5">Home</b-nav-item>
             <b-nav-item to="Me" v-if="this.$store.state.token.length > 5">Mon profil</b-nav-item>
             <b-nav-item to="/" v-if="this.$store.state.token.length < 5">Login</b-nav-item>
             <b-nav-item to="/signup" v-if="this.$store.state.token.length < 5">Créer un compte</b-nav-item>

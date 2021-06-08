@@ -97,7 +97,7 @@ exports.updateUserProfile = (req, res, next) => {
     const lastname = req.body.lastname;
     const birthdate = req.body.birthdate;
     const bio = req.body.bio;
-    const avatar = req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null;
+    const avatar = req.file ? `${req.protocol}://${req.get('host')}/public/images/${req.file.filename}` : null;
     const job = req.body.job;
     console.log('Chemin de image : '+ avatar);
 

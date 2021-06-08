@@ -7,7 +7,7 @@
     > 
       <div class="d-flex">
         <div>
-          <b-avatar :img-src="message.User.avatar" size="5rem"></b-avatar>
+          <b-avatar :src="message.User.avatar" size="5rem"></b-avatar>
         </div>
         <div>
           <p>{{ message.User.firstname }} {{ message.User.lastname }}</p>

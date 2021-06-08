@@ -1,3 +1,4 @@
 /backend/node_modules
+/backend/public/images
 /backend/config/.env
 /frontend/node_modules
