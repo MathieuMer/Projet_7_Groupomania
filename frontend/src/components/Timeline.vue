@@ -15,7 +15,7 @@
 
 <script>
 import MessageCard from "../components/MessageCard.vue";
-import { mapState } from 'vuex';
+
 
 export default {
   name: "Timeline",
@@ -24,15 +24,15 @@ export default {
   },
 
   computed: {
-    ...mapState(['userFirstname', 'userLastname']),
-
     messages() {
       return this.$store.state.messages;
     },
   },
 
   mounted() {
-    this.$store.dispatch("getMessages");
+    // Passe l'userId de vueX, pour le remettre à jour au cas ou l'user revient sur le site et qu'il a toujours son token (session persistante)
+    const userIdinVueX = this.$store.state.userId;
+    this.$store.dispatch("getMessages", userIdinVueX);
   }
 };
 </script>

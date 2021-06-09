@@ -27,6 +27,9 @@ export default new Vuex.Store({
   },
 
   mutations: {
+    SET_USER_ID(state, data) {
+      state.userId = data.userId
+    },
     AUTH_REQUEST(state) {
       state.status = 'loading'
     },
@@ -38,7 +41,6 @@ export default new Vuex.Store({
       state.token = data.token
       state.userBirthdate = data.birthdate
       state.userAvatar = data.avatar
-      axios.defaults.headers.common['Authorization'] = `Bearer ${state.token}`
     },
     AUTH_ERROR(state) {
       state.status = 'error'
@@ -90,7 +92,16 @@ export default new Vuex.Store({
     },
     UPDATE_ACCOUNT_ERROR(state) {
       state.status = 'error'
-    }
+    },
+    NEW_COMMENT_REQUEST(state) {
+      state.status = 'loading'
+    },
+    NEW_COMMENT_SUCCESS(state) {
+      state.status = 'success: comment sent'
+    },
+    NEW_COMMENT_ERROR(state) {
+      state.status = 'error'
+    },
   },
 
   actions : {
@@ -100,10 +111,10 @@ export default new Vuex.Store({
         axios({url: 'http://localhost:3000/api/user/login', data: user, method: 'POST' })
         .then(resp => {
           console.log(resp);
+          commit('AUTH_SUCCESS', resp.data);
           const token = resp.data.token;
           localStorage.setItem('token', token);
-          //const token = localStorage.getItem('token');
-          commit('AUTH_SUCCESS', resp.data);
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
           resolve(resp)
         })
         .catch(err => {
@@ -114,12 +125,17 @@ export default new Vuex.Store({
       })
     },
 
-    getMessages: ({commit}) => {
+    getMessages: ({commit}, userId) => {
       return new Promise((resolve, reject) => {
         commit('SET_MESSAGES_REQUEST')
         axios({url: 'http://localhost:3000/api/message/', method: 'GET' })
         .then(resp => {
           console.log(resp);
+          if (userId == -1) {
+            commit('SET_USER_ID', resp.data.pop())
+          } else {
+            resp.data.pop()
+          }
           commit('SET_MESSAGES_SUCCESS', resp.data);
           resolve(resp)
         })
@@ -135,6 +151,7 @@ export default new Vuex.Store({
       return new Promise((resolve) => {
         commit('LOGOUT')
         localStorage.removeItem('token')
+        localStorage.removeItem('userId')
         delete axios.defaults.headers.common['Authorization']
         resolve()
       })
@@ -198,6 +215,37 @@ export default new Vuex.Store({
         })
       })
     },
+    submitComment: ({commit}, data) => {
+      return new Promise((resolve, reject) => {
+        commit('NEW_COMMENT_REQUEST')
+        axios({url: 'http://localhost:3000/api/comment', data: data, method: 'POST' })
+        .then(resp => {
+          console.log(resp);
+          commit('NEW_COMMENT_SUCCESS')
+          resolve(resp)
+        })
+        .catch(err => {
+          commit('NEW_COMMENT_ERROR')
+          reject(err)
+        })
+      })
+    },
+    deleteComment: ({commit}, data) => {
+      return new Promise((resolve, reject) => {
+        commit('NEW_COMMENT_REQUEST')
+        axios({url: 'http://localhost:3000/api/comment', data: data, method: 'POST' })
+        .then(resp => {
+          console.log(resp);
+          commit('NEW_COMMENT_SUCCESS')
+          resolve(resp)
+        })
+        .catch(err => {
+          commit('NEW_COMMENT_ERROR')
+          reject(err)
+        })
+      })
+    },
+
   }
 });
 

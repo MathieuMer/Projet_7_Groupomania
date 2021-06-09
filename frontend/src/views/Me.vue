@@ -71,6 +71,7 @@
 // @ is an alias to /src
 import { mapState } from "vuex";
 
+// Encode preview image
 const base64Encode = data =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
