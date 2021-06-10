@@ -12,7 +12,7 @@
             <b-collapse id="collapse-avatar" class="mt-2">
               <b-card>
                 <div class="d-flex mb-3">
-                    <b-form-file v-model="image" placeholder="Choose an image" class="w-auto flex-grow-1"></b-form-file>
+                    <b-form-file v-model="image" placeholder="Importer une image" class="w-auto flex-grow-1"></b-form-file>
                     <b-button v-if="hasImage" variant="danger" class="ml-3" @click="clearImage">Clear image</b-button>
                 </div>
 

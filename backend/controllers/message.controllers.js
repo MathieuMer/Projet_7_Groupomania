@@ -64,7 +64,7 @@ exports.getAllMessage = (req, res, next) => {
 
 exports.deleteMessage = (req, res, next) => {
     // Récupération de l'id du message a supprimer
-    const messageId = req.query.id;
+    const messageId = req.body.id;
     // Chercher la ligne du message 
     Message.findOne({ where: { id: messageId } })
         // Vérifier si l'userId correspond, ou si l'user est admin
@@ -95,7 +95,7 @@ exports.editMessage = (req, res, next) => {
     // Récuperation des données
     const messageId = req.body.messageId;
     const content = req.body.content;
-    const imageurl = req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null;
+    const imageurl = req.file ? `${req.protocol}://${req.get('host')}/public/images/${req.file.filename}` : null;
     Message.findOne({ where: { id: messageId } })
         .then((message) => {
             const oldImageurl = message.imageurl;

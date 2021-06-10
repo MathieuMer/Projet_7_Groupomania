@@ -2,8 +2,6 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 
-
-
 Vue.use(Vuex)
 Vue.config.devtools = true;
 
@@ -102,6 +100,43 @@ export default new Vuex.Store({
     NEW_COMMENT_ERROR(state) {
       state.status = 'error'
     },
+    DELETE_COMMENT_REQUEST(state) {
+      state.status = 'loading'
+    },
+    DELETE_COMMENT_SUCCESS(state) {
+      state.status = 'success: comment deleted'
+    },
+    DELETE_COMMENT_ERROR(state) {
+      state.status = 'error'
+    },
+    EDIT_COMMENT_REQUEST(state) {
+      state.status = 'loading'
+    },
+    EDIT_COMMENT_SUCCESS(state) {
+      state.status = 'success: comment modified'
+    },
+    EDIT_COMMENT_ERROR(state) {
+      state.status = 'error'
+    },
+    NEW_MESSAGE_REQUEST(state) {
+      state.status = 'loading'
+    },
+    NEW_MESSAGE_SUCCESS(state) {
+      state.status = 'success: message sent'
+    },
+    NEW_MESSAGE_ERROR(state) {
+      state.status = 'error'
+    },
+    DELETE_MESSAGE_REQUEST(state) {
+      state.status = 'loading'
+    },
+    DELETE_MESSAGE_SUCCESS(state) {
+      state.status = 'success: comment deleted'
+    },
+    DELETE_MESSAGE_ERROR(state) {
+      state.status = 'error'
+    },
+
   },
 
   actions : {
@@ -232,15 +267,68 @@ export default new Vuex.Store({
     },
     deleteComment: ({commit}, data) => {
       return new Promise((resolve, reject) => {
-        commit('NEW_COMMENT_REQUEST')
-        axios({url: 'http://localhost:3000/api/comment', data: data, method: 'POST' })
+        commit('DELETE_COMMENT_REQUEST')
+        axios({url: 'http://localhost:3000/api/comment', data: data, method: 'DELETE' })
         .then(resp => {
           console.log(resp);
-          commit('NEW_COMMENT_SUCCESS')
+          commit('DELETE_COMMENT_SUCCESS')
           resolve(resp)
         })
         .catch(err => {
-          commit('NEW_COMMENT_ERROR')
+          commit('DELETE_COMMENT_ERROR')
+          reject(err)
+        })
+      })
+    },
+    editComment: ({commit}, data) => {
+      return new Promise((resolve, reject) => {
+        commit('EDIT_COMMENT_REQUEST')
+        axios({url: 'http://localhost:3000/api/comment', data: data, method: 'PUT' })
+        .then(resp => {
+          console.log(resp);
+          commit('EDIT_COMMENT_SUCCESS')
+          resolve(resp)
+        })
+        .catch(err => {
+          commit('EDIT_COMMENT_ERROR')
+          reject(err)
+        })
+      })
+    },
+    postNewMessage: ({commit}, data) => {
+      return new Promise((resolve, reject) => {
+        commit('NEW_MESSAGE_REQUEST')
+        const FormData = require('form-data');
+        let form = new FormData();
+        if (data.content !== null && data.content !== undefined) {
+          form.append('content', data.content);
+        }
+        if (data.image !== null && data.image !== undefined) {
+          form.append('image', data.image);
+        }
+        axios.post('http://localhost:3000/api/message', form, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .then(resp => {
+          console.log(resp);
+          commit('NEW_MESSAGE_SUCCESS')
+          resolve(resp)
+        })
+        .catch(err => {
+          commit('NEW_MESSAGE_ERROR')
+          reject(err)
+        })
+      })
+    },
+    deleteMessage: ({commit}, data) => {
+      return new Promise((resolve, reject) => {
+        commit('DELETE_MESSAGE_REQUEST')
+        axios({url: 'http://localhost:3000/api/message', data: data, method: 'DELETE' })
+        .then(resp => {
+          console.log(resp);
+          commit('DELETE_MESSAGE_SUCCESS')
+          resolve(resp)
+        })
+        .catch(err => {
+          commit('DELETE_MESSAGE_ERROR')
           reject(err)
         })
       })
