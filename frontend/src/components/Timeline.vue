@@ -1,18 +1,21 @@
 <template>
-  <b-container>
-    <b-row class="justify-content-center">
-      <b-col lg="6">
-          <!-- Phrase de bienvenue lorsque l'utilisateur se connecte (Nom et Prénom dans le store) -->
-          <p v-if="this.$store.state.userFirstname !== ''">Bienvenue {{ $store.state.userFirstname }} {{ $store.state.userLastname }}</p>
+  <b-container fluid class="p-0">
+    <div v-if="this.$store.state.userFirstname !== ''" class="Timeline__welcome">
+        <!-- Phrase de bienvenue lorsque l'utilisateur se connecte (Nom et Prénom dans le store) -->
+        <p class="text-center">Bienvenue {{ $store.state.userFirstname }} {{ $store.state.userLastname }}</p>
+    </div>
 
+    <b-row class="d-flex flex-column align-items-center p-0 m-0">
+      
+      <b-col lg="5" class="p-0">
           <!-- Module pour rédiger un nouveau message -->
           <div>
             <!-- bouton pour ouvrir le collapse de rédaction du nouveau message -->
-            <b-button v-b-toggle.collapse-1 variant="primary">Nouvelle publication</b-button>
+            <b-button v-b-toggle.collapse-1 variant="secondary" class="w-100">Nouvelle publication</b-button>
 
             <!-- Collapse contenant un Form : 1 champs texte et 1 champs pour charger une image -->
             <b-collapse id="collapse-1" class="mt-2">
-              <b-form @submit="postNewMessage">
+              <b-form @submit="postNewMessage" class="Timeline__NewMessage">
                 <!-- Champs texte -->
                 <b-form-textarea
                   id="textarea"
@@ -22,15 +25,15 @@
                   max-rows="6"
                 ></b-form-textarea>
                 <!-- Champs charger une image avec preview -->
-                <b-card>
+                <div class="mt-3">
                   <div class="d-flex mb-3">
                       <b-form-file v-model="image" placeholder="Importer une image" class="w-auto flex-grow-1"></b-form-file>
-                      <b-button v-if="hasImage" variant="danger" class="ml-3" @click="clearImage">Clear image</b-button>
+                      <b-button v-if="hasImage" variant="secondary" class="ml-3" @click="clearImage">Supprimer l'image</b-button>
                   </div>
                   <b-img v-if="hasImage" :src="imageSrc" class="mb-3" fluid block rounded></b-img>
-                </b-card>
+                </div>
 
-                <b-button block class="mt-3 mx-auto" type="submit" variant="primary">Publier</b-button>
+                <b-button block class="mt-3 mx-auto" type="submit" variant="secondary">Publier</b-button>
               </b-form>
             </b-collapse>
           </div>
@@ -68,7 +71,8 @@ export default {
     return {
         image: null,
         imageSrc: null,
-        newMessageContent: ''
+        newMessageContent: '',
+        renderKey: this.$store.state.renderKey
     };
   },
 
@@ -96,13 +100,24 @@ export default {
           this.imageSrc = null;
         }
       }
-    }
+    },
+    // renderKey(newValue, oldValue) {
+    //   if (newValue !== oldValue) {
+    //     this.reload();
+    //   }
+    // }
   },
 
   methods: {
     clearImage() {
       this.image = null;
     },
+    init() {
+      // Passe l'userId de vueX, pour le remettre à jour au cas ou l'user revient sur le site et qu'il a toujours son token (session persistante)
+      const userIdinVueX = this.$store.state.userId;
+      this.$store.dispatch("getMessages", userIdinVueX);
+    },
+    
     postNewMessage(event) {
       event.preventDefault()
       const data = {
@@ -111,20 +126,35 @@ export default {
       }
       this.$store.dispatch("postNewMessage", data)
       .then(() => {
-        this.$router.go()
+        this.imageSrc = null;
+        this.image = null;
+        this.$store.state.renderKey++;
+        
       })
       .catch(err => console.log(err))
     },
+    reload() {
+      this.$forceUpdate();
+    }
     
   },
 
   mounted() {
-    // Passe l'userId de vueX, pour le remettre à jour au cas ou l'user revient sur le site et qu'il a toujours son token (session persistante)
-    const userIdinVueX = this.$store.state.userId;
-    this.$store.dispatch("getMessages", userIdinVueX);
+    this.init();
   }
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+
+.Timeline__welcome {
+  background-color: #D1515A;
+  color: #FFFFFF;
+}
+
+.Timeline__NewMessage {
+  border: 2px solid #D1515A;
+  padding: 1rem;
+}
+
 </style>

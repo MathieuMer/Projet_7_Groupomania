@@ -3,7 +3,7 @@
     <div>
       <b-navbar toggleable="lg" type="dark" variant="primary">
         <b-navbar-brand href="#"><img
-            src="../assets/images/icon-left-font-monochrome-black.png"
+            src="../../public/images/icon-left-font-monochrome-white2.png"
             alt="Logo Groupomania"
             height="40px"
         /></b-navbar-brand>
@@ -27,10 +27,10 @@
               >
             </b-nav-form>
 
-            <b-nav-item to="Home" v-if="this.$store.state.token.length > 5">Home</b-nav-item>
-            <b-nav-item to="Me" v-if="this.$store.state.token.length > 5">Mon profil</b-nav-item>
-            <b-nav-item to="/" v-if="this.$store.state.token.length < 5">Login</b-nav-item>
-            <b-nav-item to="/signup" v-if="this.$store.state.token.length < 5">Créer un compte</b-nav-item>
+            <b-nav-item to="Home" :class="{active: $route.name==='Home'}" v-if="this.$store.state.token.length > 5">Home</b-nav-item>
+            <b-nav-item to="Me" :class="{active: $route.name==='Me'}" v-if="this.$store.state.token.length > 5">Mon profil</b-nav-item>
+            <b-nav-item to="/" :class="{active: $route.name==='/'}" v-if="this.$store.state.token.length < 5">Login</b-nav-item>
+            <b-nav-item to="/signup" :class="{active: $route.name==='signup'}" v-if="this.$store.state.token.length < 5">Créer un compte</b-nav-item>
             <b-nav-item href="#" v-if="this.$store.state.token.length > 5" @click="logout()">Logout</b-nav-item>
             
           </b-navbar-nav>
@@ -57,5 +57,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
 
 </style>

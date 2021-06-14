@@ -15,7 +15,7 @@ exports.newMessage = (req, res, next) => {
     }
     // Enregistrer dans la Database
     Message.create(message)
-        .then((message) => res.status(201).send({ message: "Message créé ! " }))
+        .then((message) => res.status(201).send({ message }))
         .catch((err) => res.status(500).send({ message: "Erreur lors de la création du message :" + err }));
 };
 //GET tout les messages

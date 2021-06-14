@@ -4,6 +4,7 @@ import Login from '../views/Login.vue';
 import Signup from '../views/Signup.vue';
 import Home from '../views/Home.vue';
 import Me from '../views/Me.vue';
+import User from '../views/User.vue';
 import store from '../store';
 
 Vue.use(VueRouter)
@@ -48,7 +49,14 @@ const routes = [
   {
     path: '/me',
     name: 'Me',
-    component: Me
+    component: Me,
+    beforeEnter: ifAuthenticated
+  },
+  {
+    path: '/user/:id',
+    name: 'User',
+    component: User,
+    beforeEnter: ifAuthenticated
   },
   { path: '', component: Login }
   

@@ -16,8 +16,8 @@ export default new Vuex.Store({
     userAvatar: '',
     userBirthdate: '',
     userBio: '',
-    userJob: '',
-    messages: []
+    messages: [],
+    renderKey: 1
   },
 
   getters: {

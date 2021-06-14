@@ -1,9 +1,11 @@
 <template>
   <b-container fluid>
-    <b-col>
+    <b-row align-h="center">
+      <b-col col lg="6">
       <b-form @submit="signupSubmit">
         <label class="mt-3" for="input-firstname">Prénom :</label>
         <b-form-input
+          type="text"
           id="input-firstname"
           v-model="signupForm.firstname"
           placeholder="prénom"
@@ -11,6 +13,7 @@
 
         <label class="mt-3" for="input-lastname">Nom :</label>
         <b-form-input
+          type="text"
           id="input-lastname"
           v-model="signupForm.lastname"
           placeholder="nom"
@@ -28,6 +31,7 @@
         <label class="mt-3" for="input-password">Password :</label>
         <b-form-input
           id="input-password"
+          type="password"
           v-model="signupForm.password"
           placeholder="password"
         ></b-form-input>
@@ -37,6 +41,7 @@
         >
       </b-form>
     </b-col>
+    </b-row>
   </b-container>
 </template>
 

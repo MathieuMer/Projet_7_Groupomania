@@ -1,7 +1,7 @@
 <template>
   <b-container fluid>
     <b-row align-h="center">
-      <b-col cols="12">
+      <b-col cols="12" col lg="6">
         <b-form @submit="loginSubmit">
          
           <label class="mt-3" for="input-email">E-mail :</label>
@@ -15,6 +15,7 @@
 
           <label class="mt-3" for="input-password">Password :</label>
           <b-form-input
+            type="password"
             id="input-password"
             v-model="form.password"
             placeholder="password"

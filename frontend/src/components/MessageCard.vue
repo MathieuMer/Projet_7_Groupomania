@@ -2,118 +2,114 @@
     <!-- composant Card -->
     <b-card
       tag="article"
-      class="my-2"
+      class="MessageCard my-4"
+      bg-variant="transparent"
     > 
-      <!-- Affichage date de création -->
-      <p>{{ formatDate }}</p>
+      <div class=" row d-flex flex-column">
+        <!-- Affichage Avatar, nom et prénom de l'auteur de la publication -->
+        <div class="col d-flex justify-content-start align-items-start">
+          <div>
+            <b-avatar variant="primary" :src="message.User.avatar" size="5rem" class="mb-3"></b-avatar>
+          </div>
+          <div class="w-100">
+            <p class="m-0 text-right">{{ formatDate }}</p>
+            <p class="m-0 pl-3 card__name"><router-link :to="{ name: 'User', params: { id: message.User.id }}">{{ message.User.firstname }} {{ message.User.lastname }}</router-link></p>
+            <div class="col d-flex justify-content-end align-items-start w-100">
+              <!-- Affichage icones modification et suppresion de la publication pour l'auteur du message -->
+              <div v-if="message.User.id === $store.state.userId">
+                <b-button-toolbar aria-label="Toolbar with button groups and dropdown menu">
+                  <b-button-group class="card__buttons mx-1">
+                    <b-button variant="light" size="sm" @click="editMessage(message)"><b-icon icon="pen-fill" variant="primary"></b-icon></b-button>
+                    <b-button variant="light" size="sm" @click="deleteMessage(message.id)"><b-icon icon="trash-fill" variant="danger"></b-icon></b-button>
+                  </b-button-group>
+                </b-button-toolbar>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        
+      </div>
 
-      <!-- Affichage icones modification et suppresion de la publication pour l'auteur du message -->
-      <div v-if="message.User.id === $store.state.userId">
-          <b-button variant="link" @click="editMessage(message)">
-            <b-icon icon="pen-fill" variant="danger"></b-icon>
-          </b-button>
-          <b-button variant="link" @click="deleteMessage(message.id)">
-            <b-icon icon="trash-fill" variant="danger"></b-icon>
-          </b-button>
-      </div>
-      <!-- Champs de modification du message -->
-      <input type="text" class="edit" v-model="message.content" v-if="editingMessage.id === message.id" @keyup.esc="CancelEditMessage" @keyup.enter="updateEditMessage(message)" v-focus="editingMessage.id === message.id">
-      <!-- Affichage Avatar, nom et prénom de l'auteur de la publication -->
-      <div class="d-flex">
-        <div>
-          <b-avatar :src="message.User.avatar" size="5rem"></b-avatar>
-        </div>
-        <div>
-          <p>{{ message.User.firstname }} {{ message.User.lastname }}</p>
-          <p>{{ message.User.job }}</p>
-        </div>
-      </div>
       <b-card-text> {{ message.content }} </b-card-text>
 
       <!-- Image de la publication -->
-      <img :src="message.imageurl" alt="" width="100%">
+      <img v-if="message.imageurl" class="card__image" :src="message.imageurl" alt="" width="100%">
 
       <!-- Affichage du nombre de commentaires si il y en a -->
-      <div v-if="Comments.length >= 1">
+      <div v-if="message.Comments.length >= 1">
         <p @click="showComments = !showComments"> {{numberOfComments}} </p>
       </div>
 
       <!-- Boucle Affichage Commentaires -->
-      <b-list-group flush 
-        v-show="showComments"
-        v-for="Comment in Comments"
-        :key="Comment.index"
-        :Comment="Comment"
-      > 
-        <!-- Bloc commentaire -->
-        <b-list-group-item>
-          <div>
-            <!-- Avatar, nom et prénom de l'auteur du commentaire -->
-            <b-avatar :src="Comment.User.avatar" size="2rem"></b-avatar>
-            {{Comment.User.firstname}} {{Comment.User.lastname}}
+      <b-collapse id="collapse-4" v-model="showComments" class="MessageCard__commentCollapse mt-2">
+      <CommentModule
+        v-for="comment in message.Comments"
+        :key="comment.index"
+        :comment="comment"
+      />
+      </b-collapse>
 
-            <!-- Boutons Edit et Delete uniquement pour l'auteur du commentaire -->
-            <div v-if="Comment.User.id === $store.state.userId">
-              <b-button variant="link" @click="editComment(Comment)">
-                <b-icon icon="pen-fill" variant="danger"></b-icon>
-              </b-button>
-              <b-button variant="link" @click="deleteComment(Comment.id)">
-                <b-icon icon="trash-fill" variant="danger"></b-icon>
-              </b-button>
-            </div>
-          </div>
-          <!-- Texte du commentaire -->
-          <div>
-            {{Comment.content}}
-          </div>
-        </b-list-group-item>
-
-        <!-- Champs de modification du commentaire -->
-        <input type="text" class="edit" v-model="Comment.content" v-if="editingComment.id === Comment.id" @keyup.esc="CancelEditComment" @keyup.enter="updateEditComment(Comment)" v-focus="editingComment.id === Comment.id">
-      </b-list-group>
-
-      <!-- Module pour écrire un nouveau commentaire -->
-      <b-form @submit="submitComment">
-           <b-form-textarea
-            
-            size="sm"
+      <!-- New Comment -->
+      <div class="mt-4 px-3">
+          <b-form inline @submit="submitComment" class="row d-flex justify-content-between">
+            <b-form-textarea
+            class="col-9"
+            id="textarea-no-resize"
             v-model="NewComment"
             placeholder="Votre commentaire ici"
-            rows="3"
-            max-rows="6"
+            rows="2"
+            no-resize
             required
-        ></b-form-textarea>
-        <b-button type="submit" variant="primary">Submit</b-button>
-        </b-form>
+            ></b-form-textarea>
+            <b-button class="col-2 NewComment__button" type="submit" variant="primary">Envoi<br/><b-icon icon="reply"></b-icon></b-button>
+          </b-form>
+      </div>
+
 
     </b-card>
 </template>
 
 <script>
 import Vue from 'vue';
-// import moment library (format Date)
+import CommentModule from "../components/CommentModule.vue";
 const moment = require('moment');
 moment().format(); 
 moment.locale('fr');
 
 export default {
   name: "MessageCard",
+  components: {
+    CommentModule,
+  },
 
-  props: ["message"],
+  props: {
+    message: {type: Object}
+  },
 
   data() {
         return {
             Comments: this.message.Comments,
-            showComments: false,
+            showComments: true,
+            renderKey: this.$store.state.renderKey,
             NewComment: '',
-            editingComment: '',
-            oldComment: '',
-            editingMessage: '',
-            oldMessage: ''
+            
         }
   },
 
   methods: {
+    deleteMessage(messageId) {
+      const data = {
+        id: messageId
+      };
+      console.log(data);
+      this.$store.dispatch("deleteMessage", data)
+      .then(() => {
+        const userIdinVueX = this.$store.state.userId;
+        this.$store.dispatch("getMessages", userIdinVueX);
+      })
+      .catch(err => console.log(err))
+    },
     submitComment(event) {
       event.preventDefault()
       const data = {
@@ -123,74 +119,23 @@ export default {
       console.log(data);
       this.$store.dispatch("submitComment", data)
       .then(() => {
-        this.$router.go()
+        this.NewComment = '';
+        this.$store.state.renderKey++;
       })
       .catch(err => console.log(err))
     },
-    deleteComment(CommentId) {
-      const data = {
-        commentId: CommentId
-      };
-      console.log(data);
-      this.$store.dispatch("deleteComment", data)
-      .then(() => {
-        this.$router.go()
-      })
-      .catch(err => console.log(err))
-    },
-    editComment(Comment) {
-      this.editingComment = Comment;
-      this.oldComment = this.editingComment.content;
-    },
-    editMessage(message) {
-      this.editingMessage = message;
-      this.oldMessage = this.editingMessage.content;
-    },
-    StopEditComment() {
-      this.editingComment = ''
-    },
-    StopEditMessage() {
-      this.editingMessage = ''
-    },
-    CancelEditComment() {
-      this.editingComment.content = this.oldComment;
-      this.StopEditComment();
-    },
-    CancelEditMessage() {
-      this.editingMessage.content = this.oldMessage;
-      this.StopEditMessage();
-    },
-    updateEditComment(Comment) {
-      const data = {
-        commentId: Comment.id,
-        content: Comment.content
-      };
-      console.log(data);
-      this.$store.dispatch("editComment", data)
-      .then(() => {
-        this.editingComment = ''
-      })
-      .catch(err => console.log(err))
-    },
-    deleteMessage(messageId) {
-      const data = {
-        id: messageId
-      };
-      console.log(data);
-      this.$store.dispatch("deleteMessage", data)
-      .then(() => {
-        this.$router.go()
-      })
-      .catch(err => console.log(err))
-    },
+    reload() {
+      this.$forceUpdate();
+    }
+    
   },
 
   computed: {
     numberOfComments() {
-      if (this.Comments.length >= 2) {
-        return this.Comments.length + " commentaires";
+      if (this.message.Comments.length >= 2) {
+        return this.message.Comments.length + " commentaires";
       } else {
-        return this.Comments.length + " commentaire";
+        return this.message.Comments.length + " commentaire";
       }
     },
     formatDate() {
@@ -214,10 +159,47 @@ export default {
         })
       }
     }
-  }
+  },
 
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+.MessageCard {
+  background: linear-gradient(
+      to right bottom,
+      rgba($color: #ffffff, $alpha: 0.9),
+      rgba($color: #ffffff, $alpha: 0.4),
+      rgba($color: #ffffff, $alpha: 0.7),
+      rgba($color: #ffffff, $alpha: 0.4),
+      rgba($color: #ffffff, $alpha: 0.7),
+      rgba($color: #ffffff, $alpha: 0.5),
+      rgba($color: #ffffff, $alpha: 0.8)); 
+  backdrop-filter: blur(5px);
+  background-attachment: scroll;
+  // background-position: 50% 50%;
+  border: 2px solid rgba($color: #ffffff, $alpha: 0.3);
+  box-shadow: 10px 10px 10px rgba($color: #000000, $alpha: 0.5);
+}
+
+.card__image {
+  border-radius: 0 0 3rem 1rem;
+}
+
+.card__name:after {
+  content: '';
+  position: absolute;
+  top: 4rem;
+  left: 7rem;
+  width: 4rem;
+  height: 0.3rem;
+  background: #D1515A;
+}
+
+.NewComment__button {
+  border-radius: 1rem 0 2rem 0;
+}
+
+
+
 </style>

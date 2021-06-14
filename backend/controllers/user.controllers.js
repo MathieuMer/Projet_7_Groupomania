@@ -91,6 +91,21 @@ exports.getUserProfile = (req, res, next) => {
     .catch((err) => res.status(400).send({ message: "Utilisateur non trouvé !" }));
 };
 
+exports.getUserProfileById = (req, res, next) => {
+    // Récupérer les infos dans la BDD
+    console.log(req.params.id)
+    User.findOne({
+        attributes: ['id', 'email', 'firstname', 'lastname', 'birthdate', 'bio', 'avatar', 'job'],
+        where: { id: req.params.id },
+        include: [{
+            model: Message,
+            where: { id: req.params.id }
+        }]
+    })
+    .then((resp) => { res.status(200).json({ resp }) })
+    .catch((err) => res.status(400).send({ message: "Utilisateur non trouvé !" }));
+};
+
 exports.updateUserProfile = (req, res, next) => {
     // Récuperation des données
     const firstname = req.body.firstname;
