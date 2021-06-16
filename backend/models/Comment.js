@@ -44,9 +44,14 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id'
       }
     },
+    isSignaled: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
   }, {
     sequelize,
-    modelName: 'Comment',
+    modelName: 'Comment'
   });
   return Comment;
 };

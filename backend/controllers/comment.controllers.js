@@ -1,6 +1,6 @@
 //Imports
 const Comment = require('../models').Comment;
-
+const User = require('../models').User;
 //Controllers
 // Envoyer un nouveau commentaire
 exports.newComment = (req, res, next) => {
@@ -24,7 +24,7 @@ exports.editComment = (req, res, next) => {
     Comment.findOne({ where: { id: commentid } })
         .then((comment) => {
             // Check si UserId correspond bien à l'auteur du commentaire
-            if (res.locals.userId !== comment.userId) { res.status(400).json("Vous n'avez pas les droits pour modifier ce message") };
+            if (res.locals.userId !== comment.userId) { res.status(403).json("Vous n'avez pas les droits pour modifier ce message") };
             // Update Message
             Comment.update({
                 content: (content ? content : comment.content)
@@ -46,10 +46,51 @@ exports.deleteComment = (req, res, next) => {
     Comment.findOne({ where: { id: commentId } })
         // Vérifier si l'userId correspond, ou si l'user est admin
         .then((comment) => {
-            if (res.locals.userId !== comment.userId && res.locals.isAdmin !== 1) { res.status(400).json("Vous n'avez pas les droits pour supprimer ce commentaire") };
+            if (res.locals.userId !== comment.userId && res.locals.isAdmin === false) { res.status(400).json("Vous n'avez pas les droits pour supprimer ce commentaire") };
             Comment.destroy({ where: { id: commentId } })
-                .then(() => res.status(201).json({ message: 'Commentaire supprimé' }))
+                .then(() => res.status(205).json({ message: 'Commentaire supprimé' }))
                 .catch(err => res.status(500).json({ err }));
         })
         .catch((err) => res.status(500).send({ err }));
+};
+
+exports.signalComment = (req, res, next) => {
+    const commentId = req.body.commentId;
+    Comment.update({
+        isSignaled: true,
+    },
+    {
+        where: { id: commentId }
+    })
+        .then((message) => { res.status(204).json({ message: "Le commentaire a bien été signalé !" }) })
+        .catch((err) => res.status(500).send({ message: "Erreur lors du signalement du commentaire" }));
+};
+
+exports.getAllSignaled = (req, res, next) => {
+    // Verif isAdmin
+    if (!res.locals.isAdmin) { res.status(403).json("Vous n'avez pas les droits") };
+    // Faire le requêtes des tout les messages, classés par date de création DESC
+    Comment.findAll({
+        where: { isSignaled: true },
+        include: [{
+            model: User,
+            attributes: ['lastname', 'firstname', 'avatar']
+        }]
+    })
+        .then((messages) => {
+                res.status(200).json(messages);
+        })
+        .catch((err) => res.status(500).send({ message: "Erreur lors de la requête" + err }));
+};
+
+exports.deleteSignalComment = (req, res, next) => {
+    const commentId = req.body.commentId;
+    Comment.update({
+        isSignaled: false,
+    },
+    {
+        where: { id: commentId }
+    })
+        .then((message) => { res.status(204).json({ message: "Le signalement du commentaire a bien été annulé !" }) })
+        .catch((err) => res.status(500).send({ message: err }));
 };

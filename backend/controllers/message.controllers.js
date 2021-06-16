@@ -40,7 +40,7 @@ exports.getAllMessage = (req, res, next) => {
         offset: (!isNaN(offset)) ? offset : null,
         include: [{
             model: User,
-            attributes: ['id', 'lastname', 'firstname', 'avatar', 'job']
+            attributes: ['id', 'lastname', 'firstname', 'avatar']
         }, {
             model: Comment,
             attributes: ['id', 'content', 'createdAt', 'updatedAt'],
@@ -53,7 +53,7 @@ exports.getAllMessage = (req, res, next) => {
         .then((messages) => {
             if (messages) {
                 // Ajoute l'userId récupéré du token, pour permettre au front de connaitre l'userId de l'utilisateur
-                messages.push( {userId : res.locals.userId});
+                messages.push( {userId : res.locals.userId, isAdmin: res.locals.isAdmin} );
                 res.status(200).json(messages);
             } else {
                 res.status(404).json({ "error": "Aucun message trouvé !" });
@@ -69,7 +69,7 @@ exports.deleteMessage = (req, res, next) => {
     Message.findOne({ where: { id: messageId } })
         // Vérifier si l'userId correspond, ou si l'user est admin
         .then((message) => {
-            if (res.locals.userId !== message.userId && res.locals.isAdmin !== 1) { res.status(400).json("Vous n'avez pas les droits pour supprimer ce message") };
+            if (res.locals.userId !== message.userId && res.locals.isAdmin === false) { res.status(403).json("Vous n'avez pas les droits pour supprimer ce message") };
             // Si OK => Vérifier si le message contient une image
             const imageurl = message.imageurl;
             if (imageurl !== null) {
@@ -78,13 +78,13 @@ exports.deleteMessage = (req, res, next) => {
                 fs.unlink(`./public/images/${filename}`, (err) => {
                     if (err) throw err;
                     Message.destroy({ where: { id: messageId } })
-                        .then(() => res.status(201).json({ message: 'Message supprimé' }))
+                        .then(() => res.status(205).json({ message: 'Message supprimé' }))
                         .catch(err => res.status(500).json({ err }));
                 })
             } else {
                 // Si non => Supprimer uniquement le message de la BDD
                 Message.destroy({ where: { id: messageId } })
-                    .then(() => res.status(201).json({ message: 'Message supprimé' }))
+                    .then(() => res.status(205).json({ message: 'Message supprimé' }))
                     .catch(err => res.status(500).json({ err }));
             }
         })
@@ -100,7 +100,7 @@ exports.editMessage = (req, res, next) => {
         .then((message) => {
             const oldImageurl = message.imageurl;
             // Check si UserId correspond bien à l'auteur du message
-            if (res.locals.userId !== message.userId) { res.status(400).json("Vous n'avez pas les droits pour modifier ce message") };
+            if (res.locals.userId !== message.userId) { res.status(403).json("Vous n'avez pas les droits pour modifier ce message") };
             // Suppression de l'ancienne image si elle existe ET si il y en a une nouvelle
             if (imageurl !== null && oldImageurl !== null) {
                 const filename = oldImageurl.split('/images/')[1];
@@ -116,7 +116,7 @@ exports.editMessage = (req, res, next) => {
             {
                 where: { id: messageId }
             })
-                .then((message) => { res.status(201).json({ message: "Update du message réussi !" }) })
+                .then((message) => { res.status(200).json({ message: "Update du message réussi !" }) })
                 .catch((err) => res.status(500).send({ message: "Erreur lors de la mise à jour du message" }));
 
         })
@@ -124,7 +124,46 @@ exports.editMessage = (req, res, next) => {
 };
 
 exports.signalMessage = (req, res, next) => {
+    const messageId = req.body.messageId;
+    Message.update({
+        isSignaled: true,
+    },
+    {
+        where: { id: messageId }
+    })
+        .then((message) => { res.status(204).json({ message: "Le message a bien été signalé !" }) })
+        .catch((err) => res.status(500).send({ message: "Erreur lors du signalement du message" }));
+};
 
+exports.getAllSignaled = (req, res, next) => {
+    // Verif isAdmin
+    if (!res.locals.isAdmin) { res.status(403).json("Vous n'avez pas les droits") };
+    // Faire le requêtes des tout les messages, classés par date de création DESC
+    Message.findAll({
+        where: { isSignaled: true },
+        include: [{
+            model: User,
+            attributes: ['lastname', 'firstname', 'avatar']
+        }]
+    })
+        .then((messages) => {
+                res.status(200).json(messages);
+        })
+        .catch((err) => res.status(500).send({ message: "Erreur lors de la requête" + err }));
+};
+
+exports.deleteSignalMessage = (req, res, next) => {
+    // Verif isAdmin
+    if (!res.locals.isAdmin) { res.status(403).json("Vous n'avez pas les droits") };
+    const messageId = req.body.id;
+    Message.update({
+        isSignaled: false,
+    },
+    {
+        where: { id: messageId }
+    })
+        .then((message) => { res.status(204).json({ message: "Signalement du message désactivé !" }) })
+        .catch((err) => res.status(500).send({ message: err }));
 };
 
 

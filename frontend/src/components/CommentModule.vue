@@ -15,12 +15,20 @@
         </p>
       </div>
       <b-button
-      class="CommentModule__SupButton"
-        v-if="comment.User.id === $store.state.userId"
+        class="CommentModule__SupButton"
+        v-if="(comment.User.id === $store.state.userId) || $store.state.isAdmin"
         variant="light"
         size="sm"
         @click="deleteComment(comment.id)"
         ><b-icon icon="trash-fill" variant="danger"></b-icon
+      ></b-button>
+      <b-button
+        class="CommentModule__SupButton"
+        v-if="(comment.User.id !== $store.state.userId) && !$store.state.isAdmin"
+        variant="light"
+        size="sm"
+        @click="signalComment(comment.id)"
+        ><b-icon icon="exclamation-triangle" variant="warning"></b-icon
       ></b-button>
     </div>
     <div class="pl-2 pt-1">
@@ -53,6 +61,22 @@ export default {
           this.$store.dispatch("getMessages", userIdinVueX);
         })
         .catch((err) => console.log(err));
+    },
+    signalComment(commentId) {
+      const data = {
+        commentId: commentId
+      };
+      this.$store.dispatch("signalComment", data)
+      .then(() => {
+        this.makeToast('Le commentaire a bien été signalé, il sera traité par un admin dès que possible');
+      })
+      .catch(err => console.log(err))
+    },
+    makeToast(message) {
+        this.$bvToast.toast(message, {
+          title: 'Groupomania Info',
+          solid: true
+        })
     },
   },
 };

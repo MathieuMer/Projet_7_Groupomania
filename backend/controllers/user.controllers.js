@@ -73,6 +73,7 @@ exports.login = (req, res, next) => {
                             lastname: Userfound.lastname,
                             avatar: Userfound.avatar,
                             birthdate: Userfound.birthdate,
+                            isAdmin: Userfound.isAdmin,
                             token: jwt.sign({ userId: Userfound.id, isAdmin: Userfound.isAdmin }, process.env.TOKEN_KEY, { expiresIn: '24h' })
                     });
                 })
@@ -84,7 +85,7 @@ exports.login = (req, res, next) => {
 exports.getUserProfile = (req, res, next) => {
     // Récupérer les infos dans la BDD
     User.findOne({
-        attributes: ['id', 'email', 'firstname', 'lastname', 'birthdate', 'bio', 'avatar', 'job'],
+        attributes: ['id', 'email', 'firstname', 'lastname', 'birthdate', 'bio', 'avatar'],
         where: { id: res.locals.userId }
     })
     .then((user) => { res.status(200).json({ user }) })
@@ -95,7 +96,7 @@ exports.getUserProfileById = (req, res, next) => {
     // Récupérer les infos dans la BDD
     console.log(req.params.id)
     User.findOne({
-        attributes: ['id', 'email', 'firstname', 'lastname', 'birthdate', 'bio', 'avatar', 'job'],
+        attributes: ['id', 'email', 'firstname', 'lastname', 'birthdate', 'bio', 'avatar'],
         where: { id: req.params.id },
         include: [{
             model: Message,
@@ -113,11 +114,10 @@ exports.updateUserProfile = (req, res, next) => {
     const birthdate = req.body.birthdate;
     const bio = req.body.bio;
     const avatar = req.file ? `${req.protocol}://${req.get('host')}/public/images/${req.file.filename}` : null;
-    const job = req.body.job;
     console.log('Chemin de image : '+ avatar);
 
     User.findOne({
-        attributes: ['id', 'email', 'firstname', 'lastname', 'birthdate', 'bio', 'avatar', 'job', 'avatar'],
+        attributes: ['id', 'email', 'firstname', 'lastname', 'birthdate', 'bio', 'avatar', 'avatar'],
         where: { id: res.locals.userId }
     })
     .then((User) => {
@@ -126,7 +126,6 @@ exports.updateUserProfile = (req, res, next) => {
             lastname: (lastname ? lastname : User.lastname),
             birthdate: (birthdate ? birthdate : User.birthdate),
             avatar: (avatar ? avatar : User.avatar),
-            job: (job ? job : User.job),
             bio: (bio ? bio : User.bio),
             avatar: (avatar ? avatar : User.avatar)
         })

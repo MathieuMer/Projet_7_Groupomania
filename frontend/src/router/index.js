@@ -5,11 +5,12 @@ import Signup from '../views/Signup.vue';
 import Home from '../views/Home.vue';
 import Me from '../views/Me.vue';
 import User from '../views/User.vue';
+import Admin from '../views/Admin.vue';
 import store from '../store';
 
 Vue.use(VueRouter)
 
-// Si User est déjà authenifié alors redirection vers Home
+// Lorsqu'un user arrive sur une URL du site,si User est déjà authentifié alors redirection vers Home
 const ifNotAuthenticated = (to, from, next) => {
   if (!store.getters.isAuthenticated) {
     next()
@@ -18,6 +19,7 @@ const ifNotAuthenticated = (to, from, next) => {
   next('/Home')
 }
 
+// Si User pas authentifié alors redirection vers page login
 const ifAuthenticated = (to, from, next) => {
   if (store.getters.isAuthenticated) {
     console.log(store.getters.isAuthenticated)
@@ -26,7 +28,6 @@ const ifAuthenticated = (to, from, next) => {
   }
   next('/')
 }
-
 
 const routes = [
   {
@@ -58,6 +59,13 @@ const routes = [
     component: User,
     beforeEnter: ifAuthenticated
   },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: Admin,
+    beforeEnter: ifAuthenticated
+  },
+
   { path: '', component: Login }
   
 ]

@@ -10,6 +10,7 @@ export default new Vuex.Store({
   state: {
     status: '',
     userId: -1,
+    isAdmin: false,
     token: localStorage.getItem('token') || '',
     userFirstname: '',
     userLastname: '',
@@ -17,7 +18,9 @@ export default new Vuex.Store({
     userBirthdate: '',
     userBio: '',
     messages: [],
-    renderKey: 1
+    renderKey: 1,
+    signaledMessage: [],
+    signaledComment: []
   },
 
   getters: {
@@ -25,8 +28,9 @@ export default new Vuex.Store({
   },
 
   mutations: {
-    SET_USER_ID(state, data) {
+    SET_USER_INFO(state, data) {
       state.userId = data.userId
+      state.isAdmin = data.isAdmin
     },
     AUTH_REQUEST(state) {
       state.status = 'loading'
@@ -34,6 +38,7 @@ export default new Vuex.Store({
     AUTH_SUCCESS(state, data) {
       state.status = 'success: user logged'
       state.userId = data.userId
+      state.isAdmin = data.isAdmin
       state.userFirstname = data.firstname
       state.userLastname = data.lastname
       state.token = data.token
@@ -77,7 +82,6 @@ export default new Vuex.Store({
       state.userAvatar = data.user.avatar
       state.userBirthdate = data.user.birthdate
       state.userBio = data.user.bio
-      state.userJob = data.user.job
     },
     SET_USERINFO_ERROR(state)  {
       state.status = 'error'
@@ -136,6 +140,71 @@ export default new Vuex.Store({
     DELETE_MESSAGE_ERROR(state) {
       state.status = 'error'
     },
+    DELETE_USER_REQUEST(state) {
+      state.status = 'loading'
+    },
+    DELETE_USER_SUCCESS(state) {
+      state.status = 'success: user deleted'
+    },
+    DELETE_USER_ERROR(state) {
+      state.status = 'error'
+    },
+    SIGNAL_MESSAGE_REQUEST(state) {
+      state.status = 'loading'
+    },
+    SIGNAL_MESSAGE_SUCCESS(state) {
+      state.status = 'success: message signaled'
+    },
+    SIGNAL_MESSAGE_ERROR(state) {
+      state.status = 'error'
+    },
+    SIGNAL_COMMENT_REQUEST(state) {
+      state.status = 'loading'
+    },
+    SIGNAL_COMMENT_SUCCESS(state) {
+      state.status = 'success: comment signaled'
+    },
+    SIGNAL_COMMENT_ERROR(state) {
+      state.status = 'error'
+    },
+    GETSIGNALED_COMMENT_REQUEST(state) {
+      state.status = 'loading'
+    },
+    GETSIGNALED_COMMENT_SUCCESS(state, data) {
+      state.status = 'success: signaled comments received'
+      state.signaledComment = data
+    },
+    GETSIGNALED_COMMENT_ERROR(state) {
+      state.status = 'error'
+    },
+    GETSIGNALED_MESSAGE_REQUEST(state) {
+      state.status = 'loading'
+    },
+    GETSIGNALED_MESSAGE_SUCCESS(state, data) {
+      state.status = 'success: signaled messages received'
+      state.signaledMessage = data
+    },
+    GETSIGNALED_MESSAGE_ERROR(state) {
+      state.status = 'error'
+    },
+    DELETESIGNAL_COMMENT_REQUEST(state) {
+      state.status = 'loading'
+    },
+    DELETESIGNAL_COMMENT_SUCCESS(state) {
+      state.status = 'success: comment signal deleted'
+    },
+    DELETESIGNAL_COMMENT_ERROR(state) {
+      state.status = 'error'
+    },
+    DELETESIGNAL_MESSAGE_REQUEST(state) {
+      state.status = 'loading'
+    },
+    DELETESIGNAL_MESSAGE_SUCCESS(state) {
+      state.status = 'success: message signal deleted'
+    },
+    DELETESIGNAL_MESSAGE_ERROR(state) {
+      state.status = 'error'
+    },
 
   },
 
@@ -160,17 +229,13 @@ export default new Vuex.Store({
       })
     },
 
-    getMessages: ({commit}, userId) => {
+    getMessages: ({commit}) => {
       return new Promise((resolve, reject) => {
         commit('SET_MESSAGES_REQUEST')
         axios({url: 'http://localhost:3000/api/message/', method: 'GET' })
         .then(resp => {
           console.log(resp);
-          if (userId == -1) {
-            commit('SET_USER_ID', resp.data.pop())
-          } else {
-            resp.data.pop()
-          }
+          commit('SET_USER_INFO', resp.data.pop())
           commit('SET_MESSAGES_SUCCESS', resp.data);
           resolve(resp)
         })
@@ -186,7 +251,6 @@ export default new Vuex.Store({
       return new Promise((resolve) => {
         commit('LOGOUT')
         localStorage.removeItem('token')
-        localStorage.removeItem('userId')
         delete axios.defaults.headers.common['Authorization']
         resolve()
       })
@@ -329,6 +393,114 @@ export default new Vuex.Store({
         })
         .catch(err => {
           commit('DELETE_MESSAGE_ERROR')
+          reject(err)
+        })
+      })
+    },
+    deleteUser: ({commit}, data) => {
+      return new Promise((resolve, reject) => {
+        commit('DELETE_USER_REQUEST')
+        axios({url: 'http://localhost:3000/api/user/me', data: data, method: 'DELETE' })
+        .then(resp => {
+          console.log(resp);
+          commit('DELETE_USER_SUCCESS')
+          commit('LOGOUT')
+          resolve(resp)
+        })
+        .catch(err => {
+          commit('DELETE_USER_ERROR')
+          reject(err)
+        })
+      })
+    },
+    signalMessage: ({commit}, data) => {
+      return new Promise((resolve, reject) => {
+        commit('SIGNAL_MESSAGE_REQUEST')
+        axios({url: 'http://localhost:3000/api/message/signal', data: data, method: 'PUT' })
+        .then(resp => {
+          console.log(resp);
+          commit('SIGNAL_MESSAGE_SUCCESS')
+          resolve(resp)
+        })
+        .catch(err => {
+          commit('SIGNAL_MESSAGE_ERROR')
+          reject(err)
+        })
+      })
+    },
+    signalComment: ({commit}, data) => {
+      return new Promise((resolve, reject) => {
+        commit('SIGNAL_COMMENT_REQUEST')
+        axios({url: 'http://localhost:3000/api/comment/signal', data: data, method: 'PUT' })
+        .then(resp => {
+          console.log(resp);
+          commit('SIGNAL_COMMENT_SUCCESS')
+          resolve(resp)
+        })
+        .catch(err => {
+          commit('SIGNAL_COMMENT_ERROR')
+          reject(err)
+        })
+      })
+    },
+    getSignaledComment: ({commit}) => {
+      return new Promise((resolve, reject) => {
+        commit('GETSIGNALED_COMMENT_REQUEST')
+        axios({url: 'http://localhost:3000/api/comment/signal', method: 'GET' })
+        .then(resp => {
+          console.log(resp);
+          commit('GETSIGNALED_COMMENT_SUCCESS', resp.data);
+          resolve(resp)
+        })
+        .catch(err => {
+          commit('GETSIGNALED_COMMENT_ERROR')
+          console.log(err)
+          reject(err)
+        })
+      })
+    },
+    getSignaledMessage: ({commit}) => {
+      return new Promise((resolve, reject) => {
+        commit('GETSIGNALED_MESSAGE_REQUEST')
+        axios({url: 'http://localhost:3000/api/message/signal', method: 'GET' })
+        .then(resp => {
+          console.log(resp);
+          commit('GETSIGNALED_MESSAGE_SUCCESS', resp.data);
+          resolve(resp)
+        })
+        .catch(err => {
+          commit('GETSIGNALED_MESSAGE_ERROR')
+          console.log(err)
+          reject(err)
+        })
+      })
+    },
+    deleteSignalComment: ({commit}, data) => {
+      return new Promise((resolve, reject) => {
+        commit('DELETESIGNAL_COMMENT_REQUEST')
+        axios({url: 'http://localhost:3000/api/comment/deletesignal', data: data, method: 'PUT' })
+        .then(resp => {
+          console.log(resp);
+          commit('DELETESIGNAL_COMMENT_SUCCESS')
+          resolve(resp)
+        })
+        .catch(err => {
+          commit('DELETESIGNAL_COMMENT_ERROR')
+          reject(err)
+        })
+      })
+    },
+    deleteSignalMessage: ({commit}, data) => {
+      return new Promise((resolve, reject) => {
+        commit('DELETESIGNAL_MESSAGE_REQUEST')
+        axios({url: 'http://localhost:3000/api/message/deletesignal', data: data, method: 'PUT' })
+        .then(resp => {
+          console.log(resp);
+          commit('DELETESIGNAL_MESSAGE_SUCCESS')
+          resolve(resp)
+        })
+        .catch(err => {
+          commit('DELETESIGNAL_MESSAGE_ERROR')
           reject(err)
         })
       })

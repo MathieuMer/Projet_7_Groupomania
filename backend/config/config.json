@@ -5,6 +5,10 @@
     "database": "groupomania",
     "host": "localhost",
     "dialect": "mysql",
+    "dialectOptions": {
+      "charset": "utf8mb4",
+      "collate": "utf8_general_ci"
+    },
     "operatorsAliases": false
   },
   "test": {

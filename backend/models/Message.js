@@ -29,15 +29,20 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     content: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT + ' CHARSET utf8mb4 COLLATE utf8_general_ci',
       allowNull: false,
     },
     imageurl: {
       type: DataTypes.STRING
+    },
+    isSignaled: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   }, {
     sequelize,
-    modelName: 'Message',
+    modelName: 'Message'
   });
   return Message;
 };

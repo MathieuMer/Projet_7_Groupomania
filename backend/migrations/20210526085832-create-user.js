@@ -34,9 +34,6 @@ module.exports = {
       avatar: {
         type: Sequelize.STRING
       },
-      job: {
-        type: Sequelize.STRING
-      },
       isAdmin: {
         type: Sequelize.BOOLEAN,
         allowNull: false,

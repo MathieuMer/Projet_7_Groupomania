@@ -16,11 +16,12 @@
             <p class="m-0 pl-3 card__name"><router-link :to="{ name: 'User', params: { id: message.User.id }}">{{ message.User.firstname }} {{ message.User.lastname }}</router-link></p>
             <div class="col d-flex justify-content-end align-items-start w-100">
               <!-- Affichage icones modification et suppresion de la publication pour l'auteur du message -->
-              <div v-if="message.User.id === $store.state.userId">
+              <div>
                 <b-button-toolbar aria-label="Toolbar with button groups and dropdown menu">
                   <b-button-group class="card__buttons mx-1">
-                    <b-button variant="light" size="sm" @click="editMessage(message)"><b-icon icon="pen-fill" variant="primary"></b-icon></b-button>
-                    <b-button variant="light" size="sm" @click="deleteMessage(message.id)"><b-icon icon="trash-fill" variant="danger"></b-icon></b-button>
+                    <b-button v-if="(message.User.id === $store.state.userId)" variant="light" size="sm" @click="editMessage(message)"><b-icon icon="pen-fill" variant="primary"></b-icon></b-button>
+                    <b-button v-if="(message.User.id === $store.state.userId) || $store.state.isAdmin" variant="light" size="sm" @click="deleteMessage(message.id)"><b-icon icon="trash-fill" variant="danger"></b-icon></b-button>
+                    <b-button v-if="(message.User.id !== $store.state.userId) && !$store.state.isAdmin" variant="light" size="sm" @click="signalMessage(message.id)"><b-icon icon="exclamation-triangle" variant="warning"></b-icon></b-button>
                   </b-button-group>
                 </b-button-toolbar>
               </div>
@@ -102,13 +103,28 @@ export default {
       const data = {
         id: messageId
       };
-      console.log(data);
       this.$store.dispatch("deleteMessage", data)
       .then(() => {
         const userIdinVueX = this.$store.state.userId;
         this.$store.dispatch("getMessages", userIdinVueX);
       })
       .catch(err => console.log(err))
+    },
+    signalMessage(messageId) {
+      const data = {
+        messageId: messageId
+      };
+      this.$store.dispatch("signalMessage", data)
+      .then(() => {
+        this.makeToast('Le post a bien été signalé,, il sera traité par un admin dès que possible');
+      })
+      .catch(err => console.log(err))
+    },
+    makeToast(message) {
+        this.$bvToast.toast(message, {
+          title: 'Groupomania Info',
+          solid: true
+        })
     },
     submitComment(event) {
       event.preventDefault()

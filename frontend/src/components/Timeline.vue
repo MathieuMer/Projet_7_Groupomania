@@ -113,9 +113,7 @@ export default {
       this.image = null;
     },
     init() {
-      // Passe l'userId de vueX, pour le remettre à jour au cas ou l'user revient sur le site et qu'il a toujours son token (session persistante)
-      const userIdinVueX = this.$store.state.userId;
-      this.$store.dispatch("getMessages", userIdinVueX);
+      this.$store.dispatch("getMessages");
     },
     
     postNewMessage(event) {
@@ -129,14 +127,12 @@ export default {
         this.imageSrc = null;
         this.image = null;
         this.$store.state.renderKey++;
-        
       })
       .catch(err => console.log(err))
     },
-    reload() {
-      this.$forceUpdate();
-    }
-    
+    // reload() {
+    //   this.$forceUpdate();
+    // }
   },
 
   mounted() {
