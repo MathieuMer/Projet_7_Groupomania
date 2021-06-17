@@ -29,6 +29,10 @@ const ifAuthenticated = (to, from, next) => {
   next('/')
 }
 
+
+
+
+
 const routes = [
   {
     path: '/',
@@ -66,7 +70,8 @@ const routes = [
     beforeEnter: ifAuthenticated
   },
 
-  { path: '', component: Login }
+  { path: '', component: Login },
+  
   
 ]
 
@@ -74,6 +79,12 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+// Scroll tout en haut de la page lors d'un changement de page
+router.beforeEach((to, from, next) => {
+  window.scrollTo(0, 0)
+  next();
 })
 
 export default router

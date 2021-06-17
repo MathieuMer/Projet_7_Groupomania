@@ -1,9 +1,9 @@
 <template>
   <b-container fluid>
     <b-row align-h="center">
-      <b-col col lg="6">
+      <b-col cols=12 lg="4">
       <b-form @submit="signupSubmit">
-        <label class="mt-3" for="input-firstname">Prénom :</label>
+        <label class="mt-3 text-white" for="input-firstname">Prénom :</label>
         <b-form-input
           type="text"
           id="input-firstname"
@@ -11,7 +11,7 @@
           placeholder="prénom"
         ></b-form-input>
 
-        <label class="mt-3" for="input-lastname">Nom :</label>
+        <label class="mt-3 text-white" for="input-lastname">Nom :</label>
         <b-form-input
           type="text"
           id="input-lastname"
@@ -19,7 +19,7 @@
           placeholder="nom"
         ></b-form-input>
 
-        <label class="mt-3" for="input-email">E-mail :</label>
+        <label class="mt-3 text-white" for="input-email">E-mail :</label>
         <b-form-input
           id="input-email"
           v-model="signupForm.email"
@@ -28,7 +28,7 @@
           required
         ></b-form-input>
 
-        <label class="mt-3" for="input-password">Password :</label>
+        <label class="mt-3 text-white" for="input-password">Password :</label>
         <b-form-input
           id="input-password"
           type="password"
@@ -36,10 +36,12 @@
           placeholder="password"
         ></b-form-input>
 
-        <b-button block class="mt-3 mx-auto" type="submit" variant="primary"
-          >GO !</b-button
+        <b-button block class="mt-3 mx-auto" type="submit" variant="secondary"
+          >Créer mon compte</b-button
         >
       </b-form>
+
+      <p class="text-white text-center mt-3">Déjà un compte ? <router-link :to="{ name: 'Login'}"><span class="font-weight-bold text-white">Veuillez vous connecter</span></router-link></p>
     </b-col>
     </b-row>
   </b-container>

@@ -1,19 +1,19 @@
 <template>
-  <b-container>
+  <b-container fluid class="p-0">
     <b-row class="d-flex justify-content-center">
-      <b-col lg="6">
+      <b-col cols="11" lg="4">
+        <GoBack class="goback"/>
 
-        <p class="text" v-if="accountDeleted">Votre compte a été supprimé</p>
-        
-
-          <div class="Me__UserCard d-flex justify-content-center p-3 mt-3">
-            <b-avatar variant="primary" :src="userAvatar" size="10rem"></b-avatar>
-            <div class="p-3">
-              <p class="text-center"> {{ userFirstname }} {{ userLastname }} </p>
-              <p>Date de naissance : <span v-if="userBirthdate">{{ userBirthdate }}</span> <span v-else>Pas encore renseignée</span> </p>
-              <p>Votre description : <span v-if="userBio">{{ userBio }}</span> <span v-else>Pas encore renseignée</span> </p>
-            </div>
+        <div class="conteneur text-white">
+          <b-avatar variant="primary" :src="userAvatar" size="10rem" class="avatar--conteneur mb-3"></b-avatar>
+          <div class="conteneur--top">
+            <h2 class="conteneur--top__titre text-center">{{ userFirstname }} {{ userLastname }}</h2>
           </div>
+          <div  class="conteneur--bottom mt-3 p-3">
+          <p>Date de naissance : <span v-if="userBirthdate">{{ userBirthdate }}</span> <span v-else>Pas encore renseignée</span> </p>
+          <p>Votre description : <span v-if="userBio">{{ userBio }}</span> <span v-else>Pas encore renseignée</span> </p>  
+          </div>
+        </div>
      
         <b-form @submit="updateProfil" class="d-flex flex-column align-items-center">
           <div class="Me__ModifyProfil mt-3 mx-2 p-3 w-100">
@@ -64,7 +64,6 @@
                 </div>
               </b-collapse>
             </div>
-
             <b-button block class="mt-3 mx-auto" type="submit" variant="secondary">Sauvegarder les changements</b-button>
           </div>        
         </b-form>
@@ -86,7 +85,6 @@
                 </div>
               </b-collapse>
             </div>
-
           </div>
         </b-form>
 
@@ -99,6 +97,7 @@
 <script>
 // @ is an alias to /src
 import { mapState } from "vuex";
+import GoBack from "../components/GoBack.vue";
 
 // Encode preview image
 const base64Encode = data =>
@@ -111,7 +110,9 @@ const base64Encode = data =>
 
 export default {
   name: "Me",
-  components: {},
+  components: {
+    GoBack
+  },
   data() {
     return {
         image: null,
@@ -206,7 +207,7 @@ export default {
 }
 
 .Me__ModifyProfil {
-  border: 2px solid #D1515A;
+  border: 2px solid #CD424B;
   border-radius: 1rem;
 }
 

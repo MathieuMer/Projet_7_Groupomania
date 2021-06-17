@@ -20,7 +20,8 @@ export default new Vuex.Store({
     messages: [],
     renderKey: 1,
     signaledMessage: [],
-    signaledComment: []
+    signaledComment: [],
+    otherUserProfile: ''
   },
 
   getters: {
@@ -205,6 +206,25 @@ export default new Vuex.Store({
     DELETESIGNAL_MESSAGE_ERROR(state) {
       state.status = 'error'
     },
+    GET_OTHERUSERINFO_REQUEST(state) {
+      state.status = 'loading'
+    },
+    GET_OTHERUSERINFO_SUCCESS(state, data) {
+      state.status = 'success: user:id profile received'
+      state.otherUserProfile = data.data
+    },
+    GET_OTHERUSERINFO_ERROR(state) {
+      state.status = 'error'
+    },
+    EDIT_MESSAGE_REQUEST(state) {
+      state.status = 'loading'
+    },
+    EDIT_MESSAGE_SUCCESS(state) {
+      state.status = 'success: message modified'
+    },
+    EDIT_MESSAGE_ERROR(state) {
+      state.status = 'error'
+    },
 
   },
 
@@ -272,7 +292,7 @@ export default new Vuex.Store({
         })
       })
     },
-    getUserInfos: ({commit}) => {
+    getUserInfos: ({commit}) => { // Page Me (pour voir et modifier son profil)
       return new Promise((resolve, reject) => {
         commit('SET_USERINFO_REQUEST')
         axios({url: 'http://localhost:3000/api/user/me', method: 'GET' })
@@ -501,6 +521,37 @@ export default new Vuex.Store({
         })
         .catch(err => {
           commit('DELETESIGNAL_MESSAGE_ERROR')
+          reject(err)
+        })
+      })
+    },
+    getUserProfil: ({commit}, id) => { // Page User (pour voir le profil d'un autre utilisateur)
+      return new Promise((resolve, reject) => {
+        commit('GET_OTHERUSERINFO_REQUEST')
+        axios({url: `http://localhost:3000/api/user/${id}`, method: 'GET' })
+        .then(resp => {
+          console.log(resp);
+          commit('GET_OTHERUSERINFO_SUCCESS', resp.data);
+          resolve(resp)
+        })
+        .catch(err => {
+          commit('GET_OTHERUSERINFO_ERROR')
+          console.log(err)
+          reject(err)
+        })
+      })
+    },
+    editMessage: ({commit}, data) => {
+      return new Promise((resolve, reject) => {
+        commit('EDIT_MESSAGE_REQUEST')
+        axios({url: 'http://localhost:3000/api/message', data: data, method: 'PUT' })
+        .then(resp => {
+          console.log(resp);
+          commit('EDIT_MESSAGE_SUCCESS')
+          resolve(resp)
+        })
+        .catch(err => {
+          commit('EDIT_MESSAGE_ERROR')
           reject(err)
         })
       })

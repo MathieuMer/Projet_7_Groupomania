@@ -7,7 +7,7 @@
 
     <b-row class="d-flex flex-column align-items-center p-0 m-0">
       
-      <b-col lg="5" class="p-0">
+      <b-col cols="11" lg="4" class="p-0">
           <!-- Module pour rédiger un nouveau message -->
           <div>
             <!-- bouton pour ouvrir le collapse de rédaction du nouveau message -->
@@ -144,12 +144,12 @@ export default {
 <style lang="scss" scoped>
 
 .Timeline__welcome {
-  background-color: #D1515A;
+  background-color: #CD424B;
   color: #FFFFFF;
 }
 
 .Timeline__NewMessage {
-  border: 2px solid #D1515A;
+  border: 2px solid #CD424B;
   padding: 1rem;
 }
 

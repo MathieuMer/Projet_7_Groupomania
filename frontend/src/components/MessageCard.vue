@@ -13,13 +13,16 @@
           </div>
           <div class="w-100">
             <p class="m-0 text-right">{{ formatDate }}</p>
-            <p class="m-0 pl-3 card__name"><router-link :to="{ name: 'User', params: { id: message.User.id }}">{{ message.User.firstname }} {{ message.User.lastname }}</router-link></p>
+            <p class="m-0 pl-3 card__name">
+              <router-link v-if="message.User.id !== $store.state.userId" :to="{ name: 'User', params: { id: message.User.id }}">{{ message.User.firstname }} {{ message.User.lastname }}</router-link>
+              <router-link v-else :to="{ name: 'Me' }">{{ message.User.firstname }} {{ message.User.lastname }}</router-link>
+            </p>
             <div class="col d-flex justify-content-end align-items-start w-100">
               <!-- Affichage icones modification et suppresion de la publication pour l'auteur du message -->
               <div>
                 <b-button-toolbar aria-label="Toolbar with button groups and dropdown menu">
                   <b-button-group class="card__buttons mx-1">
-                    <b-button v-if="(message.User.id === $store.state.userId)" variant="light" size="sm" @click="editMessage(message)"><b-icon icon="pen-fill" variant="primary"></b-icon></b-button>
+                    <b-button v-if="(message.User.id === $store.state.userId)" variant="light" size="sm" @click="editMessageContent(message)"><b-icon icon="pen-fill" variant="primary"></b-icon></b-button>
                     <b-button v-if="(message.User.id === $store.state.userId) || $store.state.isAdmin" variant="light" size="sm" @click="deleteMessage(message.id)"><b-icon icon="trash-fill" variant="danger"></b-icon></b-button>
                     <b-button v-if="(message.User.id !== $store.state.userId) && !$store.state.isAdmin" variant="light" size="sm" @click="signalMessage(message.id)"><b-icon icon="exclamation-triangle" variant="warning"></b-icon></b-button>
                   </b-button-group>
@@ -31,19 +34,19 @@
         </div>
         
       </div>
-
-      <b-card-text> {{ message.content }} </b-card-text>
+      <input class="w-100 bg-transparent mb-3" type="text" ref="editMessage" v-model="message.content" @blur="doneEdit(message.content)" v-show="activeEdit" v-focus="message.content === activeEdit">
+      <b-card-text v-show="!activeEdit"> {{ message.content }} </b-card-text>
 
       <!-- Image de la publication -->
       <img v-if="message.imageurl" class="card__image" :src="message.imageurl" alt="" width="100%">
 
       <!-- Affichage du nombre de commentaires si il y en a -->
       <div v-if="message.Comments.length >= 1">
-        <p @click="showComments = !showComments"> {{numberOfComments}} </p>
+        <p @click="showComments = !showComments" class="py-2 m-0"><span class="showComments">{{numberOfComments}}</span></p>
       </div>
 
       <!-- Boucle Affichage Commentaires -->
-      <b-collapse id="collapse-4" v-model="showComments" class="MessageCard__commentCollapse mt-2">
+      <b-collapse id="collapse-4" v-model="showComments" class="MessageCard__commentCollapse">
       <CommentModule
         v-for="comment in message.Comments"
         :key="comment.index"
@@ -52,18 +55,19 @@
       </b-collapse>
 
       <!-- New Comment -->
-      <div class="mt-4 px-3">
-          <b-form inline @submit="submitComment" class="row d-flex justify-content-between">
+      <div class="px-3 pt-3">
+          <b-form inline @submit="submitComment" class="row d-flex justify-content-around">
             <b-form-textarea
             class="col-9"
-            id="textarea-no-resize"
+            
             v-model="NewComment"
             placeholder="Votre commentaire ici"
             rows="2"
             no-resize
             required
             ></b-form-textarea>
-            <b-button class="col-2 NewComment__button" type="submit" variant="primary">Envoi<br/><b-icon icon="reply"></b-icon></b-button>
+            <b-button class="col-2 NewComment__button p-2" type="submit" variant="primary"><b-icon icon="reply"></b-icon></b-button>
+
           </b-form>
       </div>
 
@@ -90,15 +94,34 @@ export default {
 
   data() {
         return {
-            Comments: this.message.Comments,
-            showComments: true,
-            renderKey: this.$store.state.renderKey,
-            NewComment: '',
-            
+          Comments: this.message.Comments,
+          showComments: false,
+          renderKey: this.$store.state.renderKey,
+          NewComment: '',
+          activeEdit: null
         }
   },
 
   methods: {
+    doneEdit(content) {
+      if (!this.activeEdit) {
+        return
+      }
+      this.activeEdit = null
+      const data = {
+        messageId: this.message.id,
+        content: content
+      }
+      this.$store.dispatch("editMessage", data)
+      .then(() => {
+        this.makeToast('Votre post a été updaté avec succès !');
+      })
+      .catch(err => console.log(err))
+    },
+    editMessageContent(message) {
+      this.activeEdit = message;
+      this.$refs.editMessage.focus();
+    },
     deleteMessage(messageId) {
       const data = {
         id: messageId
@@ -209,13 +232,15 @@ export default {
   left: 7rem;
   width: 4rem;
   height: 0.3rem;
-  background: #D1515A;
+  background: #CD424B;
 }
 
 .NewComment__button {
   border-radius: 1rem 0 2rem 0;
 }
 
-
+.showComments{
+  cursor: pointer;
+}
 
 </style>

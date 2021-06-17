@@ -1,6 +1,6 @@
 <template>
-  <div class="CommentModule row d-flex flex-column mx-2 mt-2">
-    <div class="d-flex justify-content-between pt-2 pl-2 pr-2">
+  <div class="CommentModule row d-flex flex-column p-2 mx-2 mb-2">
+    <div class="d-flex justify-content-between pl-2 pr-2">
       <div class="d-flex align-items-center">
         <b-avatar
           variant="primary"
@@ -8,10 +8,8 @@
           size="3rem"
         ></b-avatar>
         <p class="m-0 pl-1">
-          <router-link :to="{ name: 'User', params: { id: comment.User.id } }"
-            >{{ comment.User.firstname }}
-            {{ comment.User.lastname }}</router-link
-          >
+          <router-link v-if="comment.User.id !== $store.state.userId" :to="{ name: 'User', params: { id: comment.User.id } }">{{ comment.User.firstname }} {{ comment.User.lastname }}</router-link>
+          <router-link v-else :to="{ name: 'Me' }">{{ comment.User.firstname }} {{ comment.User.lastname }}</router-link>
         </p>
       </div>
       <b-button
@@ -84,9 +82,9 @@ export default {
 
 <style lang="scss" scoped>
 .CommentModule {
-    border: 2px solid #D1515A;
+    border: 2px solid #ffffff25;
     border-radius: 2rem 1rem 2rem 1rem;
-    box-shadow: inset -5px -5px 5px rgba($color: #ffffff, $alpha: 0.3);
+    box-shadow: inset -2px -10px 10px rgba($color: #ffffff, $alpha: 0.5);
     background-color: rgba($color: #ffffff, $alpha: 0.2);
 }
 .CommentModule__SupButton {

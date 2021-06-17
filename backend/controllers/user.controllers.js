@@ -85,7 +85,7 @@ exports.login = (req, res, next) => {
 exports.getUserProfile = (req, res, next) => {
     // Récupérer les infos dans la BDD
     User.findOne({
-        attributes: ['id', 'email', 'firstname', 'lastname', 'birthdate', 'bio', 'avatar'],
+        attributes: ['id', 'email', 'firstname', 'lastname', 'birthdate', 'bio', 'avatar', 'createdAt'],
         where: { id: res.locals.userId }
     })
     .then((user) => { res.status(200).json({ user }) })
@@ -96,14 +96,14 @@ exports.getUserProfileById = (req, res, next) => {
     // Récupérer les infos dans la BDD
     console.log(req.params.id)
     User.findOne({
-        attributes: ['id', 'email', 'firstname', 'lastname', 'birthdate', 'bio', 'avatar'],
+        attributes: ['id', 'email', 'firstname', 'lastname', 'birthdate', 'bio', 'avatar', 'createdAt'],
         where: { id: req.params.id },
         include: [{
             model: Message,
-            where: { id: req.params.id }
+            where: { userId: req.params.id }
         }]
     })
-    .then((resp) => { res.status(200).json({ resp }) })
+    .then((data) => { res.status(200).json({ data }) })
     .catch((err) => res.status(400).send({ message: "Utilisateur non trouvé !" }));
 };
 

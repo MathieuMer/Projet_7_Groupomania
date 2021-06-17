@@ -1,10 +1,10 @@
 <template>
   <b-container fluid>
     <b-row align-h="center">
-      <b-col cols="12" col lg="6">
+      <b-col cols="12" col lg="4">
         <b-form @submit="loginSubmit">
          
-          <label class="mt-3" for="input-email">E-mail :</label>
+          <label class="mt-3 text-white" for="input-email">E-mail :</label>
           <b-form-input
             id="input-email"
             v-model="form.email"
@@ -13,7 +13,7 @@
             required
           ></b-form-input>
 
-          <label class="mt-3" for="input-password">Password :</label>
+          <label class="mt-3 text-white" for="input-password">Password :</label>
           <b-form-input
             type="password"
             id="input-password"
@@ -21,10 +21,12 @@
             placeholder="password"
           ></b-form-input>
 
-          <b-button block class="mt-3 mx-auto" type="submit" variant="primary"
+          <b-button block class="mt-3 mx-auto" type="submit" variant="secondary"
             >Se connecter</b-button
           >
-          <p v-if="showError" id="error">Username or Password is incorrect</p>
+          <p v-if="showError" id="error" class="text-white text-center mt-3">Erreur lors de l'identification : Email et/ou mot de passe incorrect</p>
+
+          <p class="text-white text-center mt-3">Pas encore de compte ? <router-link :to="{ name: 'Signup'}"><span class="font-weight-bold text-white">Créer un compte</span></router-link></p>
         </b-form>
       </b-col>
     </b-row>
@@ -55,7 +57,10 @@ export default {
       console.log(this.form);
       this.$store.dispatch("login", this.form)
       .then(() => this.$router.push('/Home'))
-      .catch(err => console.log(err))
+      .catch(err => {
+        this.showError = true;
+        console.log(err);
+      })
     }
   }
 };

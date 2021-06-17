@@ -1,5 +1,6 @@
 $primary: #122441;
-$secondary: #D1515A;
+$secondary: #CD424B;
+$danger: #CD424B;
 
 //cards
 
@@ -7,5 +8,10 @@ $card-border-radius: 3rem 1rem 3rem 1rem;
 
 // Navbar
 
-$navbar-dark-hover-color: #D1515A;
-$navbar-dark-active-color: #D1515A;
+$navbar-dark-hover-color: #CD424B;
+$navbar-dark-active-color: #CD424B;
+
+// Remove default shadow
+
+$input-btn-focus-box-shadow: none;
+$input-btn-focus-width: 0;

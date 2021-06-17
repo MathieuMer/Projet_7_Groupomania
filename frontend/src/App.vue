@@ -1,7 +1,7 @@
 <template>
-   <div class="bloc-page">
+  <div class="bloc-page">
      <Navbar />
-     <b-container fluid class="p-0">
+     <b-container fluid class="containerUnderNav p-0">
        <router-view/>
      </b-container>
     
@@ -10,13 +10,11 @@
 
 <script>
 import Navbar from '@/components/Navbar.vue';
-//import axios from 'axios';
 
 export default {
   components: {
     Navbar
   },
-  
 }
 </script>
 
@@ -29,10 +27,8 @@ export default {
 @import '~bootstrap-vue/src/index.scss';
 
 // General style overrides and custom classes
-
-
 html, body, .bloc-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 66px);
 }
 
 body {
@@ -48,6 +44,9 @@ body {
 
 a:hover {
   text-decoration: none;
+}
+.containerUnderNav {
+  margin-top: 66px ; // à cause de navbar fixed
 }
 
 </style>
