@@ -2,6 +2,7 @@
   <b-container fluid>
     <b-row align-h="center">
       <b-col cols=12 lg="4">
+        <AnimationLogo />
       <b-form @submit="signupSubmit">
         <label class="mt-3 text-white" for="input-firstname">Prénom :</label>
         <b-form-input
@@ -48,10 +49,12 @@
 </template>
 
 <script>
+import AnimationLogo from '@/components/AnimationLogo.vue'
+
 export default {
     name: 'Signup',
     components: {
-      
+      AnimationLogo
     },
   data() {
     return {

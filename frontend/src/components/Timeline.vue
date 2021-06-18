@@ -2,12 +2,13 @@
   <b-container fluid class="p-0">
     <div v-if="this.$store.state.userFirstname !== ''" class="Timeline__welcome">
         <!-- Phrase de bienvenue lorsque l'utilisateur se connecte (Nom et Prénom dans le store) -->
-        <p class="text-center">Bienvenue {{ $store.state.userFirstname }} {{ $store.state.userLastname }}</p>
+        <p class="text-center m-0 p-0">Bienvenue {{ $store.state.userFirstname }} {{ $store.state.userLastname }}</p>
     </div>
 
     <b-row class="d-flex flex-column align-items-center p-0 m-0">
       
-      <b-col cols="11" lg="4" class="p-0">
+      <b-col cols="11" md="6" lg="4" class="p-0 m-0">
+        <h1 class="text-white text-center py-3 m-0">Timeline</h1>
           <!-- Module pour rédiger un nouveau message -->
           <div>
             <!-- bouton pour ouvrir le collapse de rédaction du nouveau message -->
@@ -151,6 +152,12 @@ export default {
 .Timeline__NewMessage {
   border: 2px solid #CD424B;
   padding: 1rem;
+}
+
+h1 {
+  font-weight: 500;
+  font-size: 1.2rem;
+  letter-spacing: 20px;
 }
 
 </style>

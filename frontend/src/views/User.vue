@@ -12,7 +12,7 @@
         <div v-if="user" class="conteneur text-white">
           <b-avatar variant="primary" :src="user.avatar" size="10rem" class="avatar--conteneur mb-3"></b-avatar>
           <div class="conteneur--top">
-            <h2 class="conteneur--top__titre text-center">{{ user.firstname }} {{ user.lastname }}</h2>
+            <h1 class="conteneur--top__titre text-center">{{ user.firstname }} {{ user.lastname }}</h1>
           </div>
           <div  class="conteneur--bottom mt-3 p-3">
           <p>Date de naissance : <span v-if="user.birthdate">{{ user.birthdate }}</span> <span v-else>Pas encore renseignée</span> </p>
@@ -43,7 +43,7 @@ export default {
     return {
       loading: false,
       error: null,
-      user: null,
+      user: '',
     };
   },
   created() {
@@ -107,7 +107,7 @@ export default {
   border: 3px solid #CD424B;
 }
 .conteneur--top {
-  height: 8rem;
+  min-height: 8rem;
   background-color: #122441;
   border: 3px solid #CD424B;
   border-radius: 50% 50% 2rem 2rem;

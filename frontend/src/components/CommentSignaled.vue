@@ -1,8 +1,9 @@
 <template>
   <div>
-    <h3 class="text-center">Commentaires signalés :</h3>
+    <h2 class="text-center text-white py-3">Commentaires signalés :</h2>
+    <p v-if="this.$store.state.signaledComment.length == 0" class="text-center text-white">Il n'y a aucun commentaire signalé pour le moment.</p>
     <div class="px-2" v-for="item in this.$store.state.signaledComment" :key="item.index" :item="item">
-        <table class="table table-primary table-bordered text-center">
+        <table class="table table-transparent table-bordered text-center text-white">
       <tbody>
         <tr>
           <th scope="col">Avatar</th>
@@ -94,7 +95,7 @@ export default {
     },
   },
 
-  mounted() {
+  created() {
     this.init() 
   },
 };
@@ -115,5 +116,10 @@ export default {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
+}
+h2 {
+  font-weight: 500;
+  font-size: 1.2rem;
+  letter-spacing: 10px;
 }
 </style>

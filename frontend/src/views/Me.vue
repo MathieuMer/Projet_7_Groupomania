@@ -1,13 +1,13 @@
 <template>
   <b-container fluid class="p-0">
-    <b-row class="d-flex justify-content-center">
+    <b-row class="d-flex flex-column align-items-center m-0 p-0">
       <b-col cols="11" lg="4">
         <GoBack class="goback"/>
 
         <div class="conteneur text-white">
           <b-avatar variant="primary" :src="userAvatar" size="10rem" class="avatar--conteneur mb-3"></b-avatar>
           <div class="conteneur--top">
-            <h2 class="conteneur--top__titre text-center">{{ userFirstname }} {{ userLastname }}</h2>
+            <h1 class="conteneur--top__titre text-center">{{ userFirstname }} {{ userLastname }}</h1>
           </div>
           <div  class="conteneur--bottom mt-3 p-3">
           <p>Date de naissance : <span v-if="userBirthdate">{{ userBirthdate }}</span> <span v-else>Pas encore renseignée</span> </p>

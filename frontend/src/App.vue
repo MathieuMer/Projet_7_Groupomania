@@ -2,7 +2,9 @@
   <div class="bloc-page">
      <Navbar />
      <b-container fluid class="containerUnderNav p-0">
-       <router-view/>
+       <main>
+         <router-view/>
+       </main>
      </b-container>
     
   </div>
@@ -26,6 +28,9 @@ export default {
 @import '~bootstrap/scss/bootstrap.scss';
 @import '~bootstrap-vue/src/index.scss';
 
+// Import fonts
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
 // General style overrides and custom classes
 html, body, .bloc-page {
   min-height: calc(100vh - 66px);
@@ -40,6 +45,7 @@ body {
     background-position: 50% 50%;
     background-attachment: fixed;
     overflow-x: hidden;
+    font-family: 'Montserrat', sans-serif;
 }
 
 a:hover {
@@ -48,5 +54,7 @@ a:hover {
 .containerUnderNav {
   margin-top: 66px ; // à cause de navbar fixed
 }
+
+
 
 </style>

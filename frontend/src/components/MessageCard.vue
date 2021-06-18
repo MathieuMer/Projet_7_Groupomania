@@ -46,7 +46,7 @@
       </div>
 
       <!-- Boucle Affichage Commentaires -->
-      <b-collapse id="collapse-4" v-model="showComments" class="MessageCard__commentCollapse">
+      <b-collapse v-model="showComments" class="MessageCard__commentCollapse">
       <CommentModule
         v-for="comment in message.Comments"
         :key="comment.index"
@@ -58,7 +58,7 @@
       <div class="px-3 pt-3">
           <b-form inline @submit="submitComment" class="row d-flex justify-content-around">
             <b-form-textarea
-            class="col-9"
+            class="col-12"
             
             v-model="NewComment"
             placeholder="Votre commentaire ici"
@@ -66,7 +66,7 @@
             no-resize
             required
             ></b-form-textarea>
-            <b-button class="col-2 NewComment__button p-2" type="submit" variant="primary"><b-icon icon="reply"></b-icon></b-button>
+            <b-button class="col-12 NewComment__button py-1 mt-1" type="submit" variant="primary">Envoyer le commentaire</b-button>
 
           </b-form>
       </div>
@@ -146,7 +146,7 @@ export default {
     makeToast(message) {
         this.$bvToast.toast(message, {
           title: 'Groupomania Info',
-          solid: true
+          toaster: 'b-toaster-bottom-right'          
         })
     },
     submitComment(event) {
@@ -188,7 +188,7 @@ export default {
         return dateOfCreation.format("dddd Do MMMM YYYY à k:mm");
       }
     },
-  },
+  }, 
 
   directives: {
     focus (el, value) {
@@ -222,7 +222,7 @@ export default {
 }
 
 .card__image {
-  border-radius: 0 0 3rem 1rem;
+  border-radius: 0.5rem;
 }
 
 .card__name:after {
@@ -236,7 +236,7 @@ export default {
 }
 
 .NewComment__button {
-  border-radius: 1rem 0 2rem 0;
+  border-radius: 0 0 2rem 1rem;
 }
 
 .showComments{

@@ -55,8 +55,7 @@ export default {
       this.$store
         .dispatch("deleteComment", data)
         .then(() => {
-          const userIdinVueX = this.$store.state.userId;
-          this.$store.dispatch("getMessages", userIdinVueX);
+          this.$store.state.renderKey++;
         })
         .catch((err) => console.log(err));
     },
@@ -73,7 +72,7 @@ export default {
     makeToast(message) {
         this.$bvToast.toast(message, {
           title: 'Groupomania Info',
-          solid: true
+          toaster: 'b-toaster-bottom-right'
         })
     },
   },

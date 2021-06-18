@@ -1,8 +1,8 @@
 <template>
     <div>
         <b-row align-h="center" class="m-0">
-            <b-col cols="11" lg="6" class="m-0">
-                <h2 class="text-center">Panneau d'administration</h2>
+            <b-col cols="12" lg="4" class="m-0">
+                <h1 class="text-center text-white">Panneau d'administration</h1>
                 <div class="Admin__sousMenu text-center">
                     <b-button class="mt-3" @click="toggleDisplay = !toggleDisplay" variant="secondary">Switch Messages / Commentaires</b-button>
                 </div>
@@ -29,7 +29,7 @@ name: "Admin",
   },
   data() {
     return {
-        toggleDisplay: false,
+        toggleDisplay: true,
 
                 
 
@@ -47,7 +47,14 @@ name: "Admin",
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+
+
+h1 {
+  font-weight: 500;
+  font-size: 1.2rem;
+  letter-spacing: 10px;
+}
 h2{
     color: white;
 }

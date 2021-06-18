@@ -75,6 +75,7 @@ exports.deleteMessage = (req, res, next) => {
             if (imageurl !== null) {
                 // Si oui => Supprimer l'image et supprimer le message de la BDD
                 const filename = imageurl.split('/images')[1];
+                console.log(filename);
                 fs.unlink(`./public/images/${filename}`, (err) => {
                     if (err) throw err;
                     Message.destroy({ where: { id: messageId } })
