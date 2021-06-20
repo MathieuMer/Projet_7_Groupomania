@@ -12,8 +12,8 @@
             <b-avatar variant="primary" :src="message.User.avatar" size="5rem" class="mb-3"></b-avatar>
           </div>
           <div class="w-100">
-            <p class="m-0 text-right">{{ formatDate }}</p>
-            <p class="m-0 pl-3 card__name">
+            <p class="m-0 text-right MessageCard__formatDate">{{ formatDate }}</p>
+            <p class="m-0 pl-3 MessageCard__name">
               <router-link v-if="message.User.id !== $store.state.userId" :to="{ name: 'User', params: { id: message.User.id }}">{{ message.User.firstname }} {{ message.User.lastname }}</router-link>
               <router-link v-else :to="{ name: 'Me' }">{{ message.User.firstname }} {{ message.User.lastname }}</router-link>
             </p>
@@ -34,11 +34,24 @@
         </div>
         
       </div>
-      <input class="w-100 bg-transparent mb-3" type="text" ref="editMessage" v-model="message.content" @blur="doneEdit(message.content)" v-show="activeEdit" v-focus="message.content === activeEdit">
+      
       <b-card-text v-show="!activeEdit"> {{ message.content }} </b-card-text>
+      
+      <div v-if="activeEdit" v-click-outside="onClickOutside" ref="editMessage" class="d-flex flex-column">
+        <input class="w-100 bg-transparent mb-3" type="text" v-model="message.content" @keyup.enter="doneEdit()" @keyup.esc="cancelEdit()" v-focus="message.content === activeEdit">
+        <div v-if="activeEdit" class="d-flex mb-3">
+          <b-form-file v-model="newImage" placeholder="Importer une image" class="w-auto flex-grow-1"></b-form-file>
+        </div>
+        <div class="d-flex justify-content-end">
+          <b-button v-if="activeEdit && (message.imageurl || newImageSrc)" variant="light" size="sm" @click="deleteImage()">Supprimer l'image<b-icon icon="trash-fill" variant="danger"></b-icon></b-button>
+          <b-button variant="secondary" size="sm" @click="cancelEdit()">Annuler</b-button>
+          <b-button variant="primary" size="sm" @click="doneEdit()">Valider les changements</b-button>
+        </div>
+      </div>
 
       <!-- Image de la publication -->
-      <img v-if="message.imageurl" class="card__image" :src="message.imageurl" alt="" width="100%">
+      <img v-if="message.imageurl && newImage == null" class="MessageCard__image" :src="message.imageurl" alt="" width="100%">
+      <img v-if="newImage !== null" class="MessageCard__image" :src="newImageSrc" alt="" width="100%">
 
       <!-- Affichage du nombre de commentaires si il y en a -->
       <div v-if="message.Comments.length >= 1">
@@ -62,7 +75,7 @@
             
             v-model="NewComment"
             placeholder="Votre commentaire ici"
-            rows="2"
+            rows="1"
             no-resize
             required
             ></b-form-textarea>
@@ -78,9 +91,18 @@
 <script>
 import Vue from 'vue';
 import CommentModule from "../components/CommentModule.vue";
+import vClickOutside from 'v-click-outside';
 const moment = require('moment');
 moment().format(); 
 moment.locale('fr');
+
+const base64Encode = data =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(data);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+});
 
 export default {
   name: "MessageCard",
@@ -96,31 +118,71 @@ export default {
         return {
           Comments: this.message.Comments,
           showComments: false,
-          renderKey: this.$store.state.renderKey,
           NewComment: '',
-          activeEdit: null
-        }
+          activeEdit: null,
+          oldEdit: null,
+          oldImage: null,
+          newImage: null,
+          newImageSrc: null,
+          deleteOld: false
+        } 
   },
 
   methods: {
-    doneEdit(content) {
+    doneEdit() {
       if (!this.activeEdit) {
         return
       }
-      this.activeEdit = null
-      const data = {
-        messageId: this.message.id,
-        content: content
+      let data ='';
+      let messageId = this.message.id;
+      let content = this.activeEdit.content;
+      let file = this.newImage;
+      if (!file && this.oldImage && this.deleteOld) {
+        data = {
+          messageId:  messageId,
+          content: content,
+          deleteOld: true
+        }
+      } else {
+        data = {
+          messageId: messageId,
+          content: content,
+          file: file
+        }
       }
       this.$store.dispatch("editMessage", data)
       .then(() => {
         this.makeToast('Votre post a été updaté avec succès !');
+        this.activeEdit = null;
+        this.oldEdit = null;
+        this.oldEdit = null;
+        this.oldImage = null;
+        this.newImage = null;
+        this.newImageSrc = null;
+        this.deleteOld = false;
+        this.$store.state.renderKey++;
+        this.reload();
       })
       .catch(err => console.log(err))
     },
     editMessageContent(message) {
-      this.activeEdit = message;
-      this.$refs.editMessage.focus();
+      this.activeEdit = this.message;
+      this.oldEdit = message.content;
+      this.oldImage = message.imageurl;
+      //this.$refs.editMessage.focus();
+    },
+    cancelEdit() {
+      this.message.content = this.oldEdit;
+      this.message.imageurl = this.oldImage;
+      this.newImage = null;
+      this.newImageSrc = null;
+      this.activeEdit = null;
+    },
+    deleteImage() {
+      this.message.imageurl = null;
+      this.newImage = null;
+      this.newImageSrc = null;
+      this.deleteOld = true;
     },
     deleteMessage(messageId) {
       const data = {
@@ -165,7 +227,11 @@ export default {
     },
     reload() {
       this.$forceUpdate();
+    },
+    onClickOutside () {
+      this.cancelEdit();
     }
+    
     
   },
 
@@ -188,7 +254,28 @@ export default {
         return dateOfCreation.format("dddd Do MMMM YYYY à k:mm");
       }
     },
-  }, 
+    hasImage() {
+      return !!this.newImage;
+    }
+  },
+  // Preview de l'image chargée
+  watch: {
+    newImage(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        if (newValue) {
+          base64Encode(newValue)
+            .then(value => {
+              this.newImageSrc = value;
+            })
+            .catch(() => {
+              this.newImageSrc = null;
+            });
+        } else {
+          this.newImageSrc = null;
+        }
+      }
+    },
+  },
 
   directives: {
     focus (el, value) {
@@ -197,7 +284,8 @@ export default {
           el.focus()
         })
       }
-    }
+    },
+    clickOutside: vClickOutside.directive,
   },
 
 };
@@ -217,15 +305,22 @@ export default {
   backdrop-filter: blur(5px);
   background-attachment: scroll;
   // background-position: 50% 50%;
-  border: 2px solid rgba($color: #ffffff, $alpha: 0.3);
-  box-shadow: 10px 10px 10px rgba($color: #000000, $alpha: 0.5);
+  border: 2px solid rgba($color: #ffffff, $alpha: 0.2);
+  box-shadow: 10px 10px 10px rgba($color: #000000, $alpha: 0.5),
+              inset 5px 10px 10px rgba($color: #ffffff, $alpha: 0.5),
+              inset -5px -10px 10px rgba($color: #000000, $alpha: 0.4);
 }
 
-.card__image {
+.MessageCard__image {
   border-radius: 0.5rem;
+  border: 2px solid rgba($color: #000000, $alpha: 0.5);
 }
 
-.card__name:after {
+.MessageCard__name {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+.MessageCard__name:after {
   content: '';
   position: absolute;
   top: 4rem;
@@ -242,5 +337,11 @@ export default {
 .showComments{
   cursor: pointer;
 }
+.MessageCard__formatDate {
+  font-style: italic;
+  font-size: 1rem;
+}
+
+
 
 </style>

@@ -21,6 +21,7 @@
             id="input-password"
             v-model="form.password"
             placeholder="password"
+            required
           ></b-form-input>
 
           <b-button block class="mt-3 mx-auto" type="submit" variant="secondary"
@@ -69,5 +70,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 
 </style>

@@ -97,21 +97,26 @@ exports.editMessage = (req, res, next) => {
     const messageId = req.body.messageId;
     const content = req.body.content;
     const imageurl = req.file ? `${req.protocol}://${req.get('host')}/public/images/${req.file.filename}` : null;
+    const deleteOld = req.body.deleteOld;
     Message.findOne({ where: { id: messageId } })
         .then((message) => {
-            const oldImageurl = message.imageurl;
+            let oldImageurl = message.imageurl;
             // Check si UserId correspond bien à l'auteur du message
             if (res.locals.userId !== message.userId) { res.status(403).json("Vous n'avez pas les droits pour modifier ce message") };
-            // Suppression de l'ancienne image si elle existe ET si il y en a une nouvelle
-            if (imageurl !== null && oldImageurl !== null) {
+            // Suppression de l'ancienne image si elle existe, ET (si il y en a une nouvelle OU si deleteOld = true)
+            if ((oldImageurl !== null) && (imageurl || deleteOld)) {
                 const filename = oldImageurl.split('/images/')[1];
                 fs.unlink(`./public/images/${filename}`, (err) => {
                     if (err) throw err;
                 });
             };
+            if (deleteOld) {
+                oldImageurl = null
+            }
+            
             // Update Message
             Message.update({
-                content: (content ? content : message.content),
+                content: content,
                 imageurl: (imageurl ? imageurl : oldImageurl)
             },
             {

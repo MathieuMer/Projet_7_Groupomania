@@ -7,6 +7,7 @@ import router from './router'
 import store from './store/index'
 import axios from 'axios';
 
+
 Vue.config.productionTip = false
 
 //Réactive le header Authorization

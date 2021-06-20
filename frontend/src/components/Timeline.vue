@@ -27,8 +27,10 @@
                 ></b-form-textarea>
                 <!-- Champs charger une image avec preview -->
                 <div class="mt-3">
+                  <small id="fileHelp" class="form-text text-white text-right">Formats d'images valides: .jpeg .jpg .png .gif</small>
                   <div class="d-flex mb-3">
-                      <b-form-file v-model="image" placeholder="Importer une image" class="w-auto flex-grow-1"></b-form-file>
+                      
+                      <b-form-file v-model="image" accept=".jpg, .jpeg, .png, .gif" id="add-image" placeholder="Importer une image" class="w-auto flex-grow-1"></b-form-file>
                       <b-button v-if="hasImage" variant="secondary" class="ml-3" @click="clearImage">Supprimer l'image</b-button>
                   </div>
                   <b-img v-if="hasImage" :src="imageSrc" class="mb-3" fluid block rounded></b-img>

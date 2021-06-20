@@ -544,7 +544,17 @@ export default new Vuex.Store({
     editMessage: ({commit}, data) => {
       return new Promise((resolve, reject) => {
         commit('EDIT_MESSAGE_REQUEST')
-        axios({url: 'http://localhost:3000/api/message', data: data, method: 'PUT' })
+        const FormData = require('form-data');
+        let form = new FormData();
+        form.append('messageId', data.messageId);
+        form.append('content', data.content);
+        if (data.file !== null && data.file !== undefined) {
+          form.append('image', data.file);
+        }
+        if (data.deleteOld) {
+          form.append('deleteOld', data.deleteOld);
+        }
+        axios.put('http://localhost:3000/api/message', form, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then(resp => {
           console.log(resp);
           commit('EDIT_MESSAGE_SUCCESS')

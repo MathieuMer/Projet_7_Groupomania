@@ -23,10 +23,10 @@ exports.signup = (req, res, next) => {
     };
     // Vérification REGEX pour Email et Password
     if (!EMAIL_REGEX.test(email)) {
-        return res.status(400).send({ message: "Format de l'email incorrect" });
+        return res.status(400).send({ error: "Format de l'email incorrect" });
     };
     if (!PASSWORD_REGEX.test(password)) {
-        return res.status(400).send({ message: "Format du mot de passe incorrect" });
+        return res.status(400).send({ error: "Format du mot de passe incorrect" });
     };
     // Vérifier si l'email existe déjà
     User.findOne({
@@ -154,9 +154,9 @@ exports.deleteUserProfile = (req, res, next) => {
             bcrypt.compare(password, Userfound.password)
                 .then(valid => {
                     if (!valid) {
-                        return res.status(401).json({ message: 'Mot de passe incorrect !!!!' });
+                        return res.status(401).json({ message: 'Mot de passe incorrect !' });
                     }
-                    // Supprimer le fichier image de l'user
+                    // Supprimer le fichier image avatar
                     if (Userfound.avatar !== null) {
                         const avatar = Userfound.avatar;
                         const avatarFileName = avatar.split('/images')[1];
@@ -187,7 +187,7 @@ exports.deleteUserProfile = (req, res, next) => {
                         })
                         .catch((err) => res.status(500).send({ message: "Erreur lors de la reqête" + err }))
                 })
-                .catch((err) => res.status(401).send({ message: 'Mot de passe incorrect !' + err }));
+                .catch((err) => res.status(500).send({ message: 'Impossible de vérifier le mot de passe' + err }));
         })
         .catch((err) => res.status(400).send({ message: "Utilisateur non trouvé !" + err }));
 };

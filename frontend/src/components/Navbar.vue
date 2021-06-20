@@ -31,8 +31,8 @@
             <b-nav-item to="/Me" :class="{active: $route.name==='Me'}" v-if="this.$store.state.token.length > 5">Mon profil</b-nav-item>
             <b-nav-item to="/Admin" :class="{active: $route.name==='Admin'}" v-if="(this.$store.state.token.length > 5) && (this.$store.state.isAdmin === true) ">Admin</b-nav-item>
             <b-nav-item to="/" :class="{active: $route.name==='Login'}" v-if="this.$store.state.token.length < 5">Login</b-nav-item>
-            <b-nav-item to="/signup" :class="{active: $route.name==='Signup'}" v-if="this.$store.state.token.length < 5">Créer un compte</b-nav-item>
-            <b-nav-item href="#" v-if="this.$store.state.token.length > 5" @click="logout()">Logout</b-nav-item>
+            <b-nav-item class="mr-2" to="/signup" :class="{active: $route.name==='Signup'}" v-if="this.$store.state.token.length < 5">Créer un compte</b-nav-item>
+            <b-nav-item href="#" v-if="this.$store.state.token.length > 5" @click="logout()"><b-icon icon="power" class="mr-2"></b-icon>Logout</b-nav-item>
             
           </b-navbar-nav>
         </b-collapse>
