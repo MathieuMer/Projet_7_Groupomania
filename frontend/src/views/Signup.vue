@@ -8,6 +8,7 @@
         <b-form-input
           type="text"
           id="input-firstname"
+          autocomplete="firstname"
           v-model="signupForm.firstname"
           placeholder="prénom"
           required
@@ -17,6 +18,7 @@
         <b-form-input
           type="text"
           id="input-lastname"
+          autocomplete="lastname"
           v-model="signupForm.lastname"
           placeholder="nom"
           required
@@ -27,6 +29,7 @@
           id="input-email"
           v-model="signupForm.email"
           type="email"
+          autocomplete="email"
           placeholder="martin.durand@groupomania.fr"
           required
         ></b-form-input>
@@ -35,6 +38,7 @@
         <b-form-input
           id="input-password"
           type="password"
+          autocomplete="new-password"
           v-model="signupForm.password"
           placeholder="password"
           required

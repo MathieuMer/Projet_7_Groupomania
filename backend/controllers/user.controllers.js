@@ -101,6 +101,7 @@ exports.getUserProfileById = (req, res, next) => {
         where: { id: req.params.id },
         include: [{
             model: Message,
+            required: false,
             where: { userId: req.params.id }
         }]
     })

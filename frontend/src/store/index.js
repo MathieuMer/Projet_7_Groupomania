@@ -2,6 +2,26 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 
+// Options de l'instance
+const defaultOptions = {
+  baseURL: 'http://localhost:3000/api/',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+};
+
+// Creation de l'instance
+let server = axios.create(defaultOptions);
+
+// Intercepteur qui ajoute le header Authorization sur toutes les requetes
+server.interceptors.request.use(function (config) {
+  const token = localStorage.getItem('token');
+  config.headers.Authorization =  token ? `Bearer ${token}` : '';
+  return config;
+});
+
+
+
 Vue.use(Vuex)
 Vue.config.devtools = true;
 
@@ -232,13 +252,13 @@ export default new Vuex.Store({
     login: ({commit}, user) => {
       return new Promise((resolve, reject) => {
         commit('AUTH_REQUEST')
-        axios({url: 'http://localhost:3000/api/user/login', data: user, method: 'POST' })
+        server({url: 'user/login', data: user, method: 'POST' })
         .then(resp => {
           console.log(resp);
           commit('AUTH_SUCCESS', resp.data);
           const token = resp.data.token;
           localStorage.setItem('token', token);
-          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+          server.defaults.headers.common['Authorization'] = `Bearer ${token}`
           resolve(resp)
         })
         .catch(err => {
@@ -252,10 +272,9 @@ export default new Vuex.Store({
     getMessages: ({commit}) => {
       return new Promise((resolve, reject) => {
         commit('SET_MESSAGES_REQUEST')
-        axios({url: 'http://localhost:3000/api/message/', method: 'GET' })
+        server({url: 'message/', method: 'GET' })
         .then(resp => {
           console.log(resp);
-          commit('SET_USER_INFO', resp.data.pop())
           commit('SET_MESSAGES_SUCCESS', resp.data);
           resolve(resp)
         })
@@ -271,7 +290,7 @@ export default new Vuex.Store({
       return new Promise((resolve) => {
         commit('LOGOUT')
         localStorage.removeItem('token')
-        delete axios.defaults.headers.common['Authorization']
+        delete server.defaults.headers.common['Authorization']
         resolve()
       })
     },
@@ -279,7 +298,7 @@ export default new Vuex.Store({
     signup: ({commit}, user) => {
       return new Promise((resolve, reject) => {
         commit('CREATE_ACCOUNT_REQUEST')
-        axios({url: 'http://localhost:3000/api/user/signup', data: user, method: 'POST' })
+        server({url: 'user/signup', data: user, method: 'POST' })
         .then(resp => {
           console.log(resp);
           commit('CREATE_ACCOUNT_SUCCESS')
@@ -295,7 +314,7 @@ export default new Vuex.Store({
     getUserInfos: ({commit}) => { // Page Me (pour voir et modifier son profil)
       return new Promise((resolve, reject) => {
         commit('SET_USERINFO_REQUEST')
-        axios({url: 'http://localhost:3000/api/user/me', method: 'GET' })
+        server({url: 'user/me', method: 'GET' })
         .then(resp => {
           console.log(resp);
           commit('SET_USERINFO_SUCCESS', resp.data);
@@ -322,7 +341,7 @@ export default new Vuex.Store({
         if (data.image !== null && data.image !== undefined) {
           form.append('image', data.image);
         }
-        axios.put('http://localhost:3000/api/user/me', form, { headers: { 'Content-Type': 'multipart/form-data' } })
+        server.put('user/me', form, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then(resp => {
           console.log(resp);
           commit('UPDATE_ACCOUNT_SUCCESS')
@@ -337,7 +356,7 @@ export default new Vuex.Store({
     submitComment: ({commit}, data) => {
       return new Promise((resolve, reject) => {
         commit('NEW_COMMENT_REQUEST')
-        axios({url: 'http://localhost:3000/api/comment', data: data, method: 'POST' })
+        server({url: 'comment', data: data, method: 'POST' })
         .then(resp => {
           console.log(resp);
           commit('NEW_COMMENT_SUCCESS')
@@ -352,7 +371,7 @@ export default new Vuex.Store({
     deleteComment: ({commit}, data) => {
       return new Promise((resolve, reject) => {
         commit('DELETE_COMMENT_REQUEST')
-        axios({url: 'http://localhost:3000/api/comment', data: data, method: 'DELETE' })
+        server({url: 'comment', data: data, method: 'DELETE' })
         .then(resp => {
           console.log(resp);
           commit('DELETE_COMMENT_SUCCESS')
@@ -367,7 +386,7 @@ export default new Vuex.Store({
     editComment: ({commit}, data) => {
       return new Promise((resolve, reject) => {
         commit('EDIT_COMMENT_REQUEST')
-        axios({url: 'http://localhost:3000/api/comment', data: data, method: 'PUT' })
+        server({url: 'comment', data: data, method: 'PUT' })
         .then(resp => {
           console.log(resp);
           commit('EDIT_COMMENT_SUCCESS')
@@ -390,7 +409,7 @@ export default new Vuex.Store({
         if (data.image !== null && data.image !== undefined) {
           form.append('image', data.image);
         }
-        axios.post('http://localhost:3000/api/message', form, { headers: { 'Content-Type': 'multipart/form-data' } })
+        server.post('message', form, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then(resp => {
           console.log(resp);
           commit('NEW_MESSAGE_SUCCESS')
@@ -405,7 +424,7 @@ export default new Vuex.Store({
     deleteMessage: ({commit}, data) => {
       return new Promise((resolve, reject) => {
         commit('DELETE_MESSAGE_REQUEST')
-        axios({url: 'http://localhost:3000/api/message', data: data, method: 'DELETE' })
+        server({url: 'message', data: data, method: 'DELETE' })
         .then(resp => {
           console.log(resp);
           commit('DELETE_MESSAGE_SUCCESS')
@@ -420,7 +439,7 @@ export default new Vuex.Store({
     deleteUser: ({commit}, data) => {
       return new Promise((resolve, reject) => {
         commit('DELETE_USER_REQUEST')
-        axios({url: 'http://localhost:3000/api/user/me', data: data, method: 'DELETE' })
+        server({url: 'user/me', data: data, method: 'DELETE' })
         .then(resp => {
           console.log(resp);
           commit('DELETE_USER_SUCCESS')
@@ -436,7 +455,7 @@ export default new Vuex.Store({
     signalMessage: ({commit}, data) => {
       return new Promise((resolve, reject) => {
         commit('SIGNAL_MESSAGE_REQUEST')
-        axios({url: 'http://localhost:3000/api/message/signal', data: data, method: 'PUT' })
+        server({url: 'message/signal', data: data, method: 'PUT' })
         .then(resp => {
           console.log(resp);
           commit('SIGNAL_MESSAGE_SUCCESS')
@@ -451,7 +470,7 @@ export default new Vuex.Store({
     signalComment: ({commit}, data) => {
       return new Promise((resolve, reject) => {
         commit('SIGNAL_COMMENT_REQUEST')
-        axios({url: 'http://localhost:3000/api/comment/signal', data: data, method: 'PUT' })
+        server({url: 'comment/signal', data: data, method: 'PUT' })
         .then(resp => {
           console.log(resp);
           commit('SIGNAL_COMMENT_SUCCESS')
@@ -466,7 +485,7 @@ export default new Vuex.Store({
     getSignaledComment: ({commit}) => {
       return new Promise((resolve, reject) => {
         commit('GETSIGNALED_COMMENT_REQUEST')
-        axios({url: 'http://localhost:3000/api/comment/signal', method: 'GET' })
+        server({url: 'comment/signal', method: 'GET' })
         .then(resp => {
           console.log(resp);
           commit('GETSIGNALED_COMMENT_SUCCESS', resp.data);
@@ -482,7 +501,7 @@ export default new Vuex.Store({
     getSignaledMessage: ({commit}) => {
       return new Promise((resolve, reject) => {
         commit('GETSIGNALED_MESSAGE_REQUEST')
-        axios({url: 'http://localhost:3000/api/message/signal', method: 'GET' })
+        server({url: 'message/signal', method: 'GET' })
         .then(resp => {
           console.log(resp);
           commit('GETSIGNALED_MESSAGE_SUCCESS', resp.data);
@@ -498,7 +517,7 @@ export default new Vuex.Store({
     deleteSignalComment: ({commit}, data) => {
       return new Promise((resolve, reject) => {
         commit('DELETESIGNAL_COMMENT_REQUEST')
-        axios({url: 'http://localhost:3000/api/comment/deletesignal', data: data, method: 'PUT' })
+        server({url: 'comment/deletesignal', data: data, method: 'PUT' })
         .then(resp => {
           console.log(resp);
           commit('DELETESIGNAL_COMMENT_SUCCESS')
@@ -513,7 +532,7 @@ export default new Vuex.Store({
     deleteSignalMessage: ({commit}, data) => {
       return new Promise((resolve, reject) => {
         commit('DELETESIGNAL_MESSAGE_REQUEST')
-        axios({url: 'http://localhost:3000/api/message/deletesignal', data: data, method: 'PUT' })
+        server({url: 'message/deletesignal', data: data, method: 'PUT' })
         .then(resp => {
           console.log(resp);
           commit('DELETESIGNAL_MESSAGE_SUCCESS')
@@ -528,7 +547,7 @@ export default new Vuex.Store({
     getUserProfil: ({commit}, id) => { // Page User (pour voir le profil d'un autre utilisateur)
       return new Promise((resolve, reject) => {
         commit('GET_OTHERUSERINFO_REQUEST')
-        axios({url: `http://localhost:3000/api/user/${id}`, method: 'GET' })
+        server({url: `user/${id}`, method: 'GET' })
         .then(resp => {
           console.log(resp);
           commit('GET_OTHERUSERINFO_SUCCESS', resp.data);
@@ -554,7 +573,7 @@ export default new Vuex.Store({
         if (data.deleteOld) {
           form.append('deleteOld', data.deleteOld);
         }
-        axios.put('http://localhost:3000/api/message', form, { headers: { 'Content-Type': 'multipart/form-data' } })
+        server.put('message', form, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then(resp => {
           console.log(resp);
           commit('EDIT_MESSAGE_SUCCESS')
@@ -564,6 +583,12 @@ export default new Vuex.Store({
           commit('EDIT_MESSAGE_ERROR')
           reject(err)
         })
+      })
+    },
+    setUserId({commit}, data){
+      return new Promise((resolve) => {
+        commit('SET_USER_INFO', data);
+        resolve()
       })
     },
 

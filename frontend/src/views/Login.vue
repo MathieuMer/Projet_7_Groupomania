@@ -9,6 +9,7 @@
           <label class="mt-3 text-white" for="input-email">E-mail :</label>
           <b-form-input
             id="input-email"
+            autocomplete="current-email"
             v-model="form.email"
             type="email"
             placeholder="martin.durand@groupomania.fr"
@@ -20,6 +21,7 @@
             type="password"
             id="input-password"
             v-model="form.password"
+            autocomplete="current-password"
             placeholder="password"
             required
           ></b-form-input>

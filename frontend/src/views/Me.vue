@@ -25,7 +25,7 @@
               <b-collapse id="collapse-avatar" class="mt-2">
                 <div>
                   <div class="d-flex">
-                      <b-form-file v-model="image" placeholder="Importer une image" class="w-auto flex-grow-1"></b-form-file>
+                      <b-form-file v-model="image" placeholder="Importer une image" accept=".jpeg, .jpg, .png, .gif" class="w-auto flex-grow-1"></b-form-file>
                       <b-button v-if="hasImage" variant="secondary" class="ml-3" @click="clearImage">Supprimer la photo</b-button>
                   </div>
 

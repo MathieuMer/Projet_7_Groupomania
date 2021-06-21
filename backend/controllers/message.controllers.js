@@ -52,8 +52,6 @@ exports.getAllMessage = (req, res, next) => {
     })
         .then((messages) => {
             if (messages) {
-                // Ajoute l'userId récupéré du token, pour permettre au front de connaitre l'userId de l'utilisateur
-                messages.push( {userId : res.locals.userId, isAdmin: res.locals.isAdmin} );
                 res.status(200).json(messages);
             } else {
                 res.status(404).json({ "error": "Aucun message trouvé !" });

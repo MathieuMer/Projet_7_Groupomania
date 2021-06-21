@@ -6,22 +6,27 @@ import App from './App.vue'
 import router from './router'
 import store from './store/index'
 import axios from 'axios';
+const jwt = require('jsonwebtoken');
+require('dotenv').config({path: './assets/.env'});
+
+//Vérification de la présence d'un token
+const token = localStorage.getItem('token');
+if (token) {
+  // Remet le header Authorization par défaut
+  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  // Remet l'id et isAdmin dans le store
+  const decodedToken = jwt.decode(token);
+  console.log(decodedToken);
+  const data = {
+    userId: decodedToken.userId,
+    isAdmin: decodedToken.isAdmin
+  }
+  store.dispatch("setUserId", data);
+}
 
 
 Vue.config.productionTip = false
 
-//Réactive le header Authorization
-const tokenInLocalstorage = localStorage.getItem('token');
-if (tokenInLocalstorage) {
-  axios.defaults.headers.common['Authorization'] = `Bearer ${tokenInLocalstorage}`
-}
-
-// // Filtre global capitalize
-// Vue.filter('capitalize', function (value) {
-//   if (!value) return ''
-//   value = value.toString().toLowerCase()
-//   return `${value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()}`
-// })
 
 new Vue({
   store,

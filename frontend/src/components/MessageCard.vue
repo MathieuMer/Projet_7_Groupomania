@@ -37,14 +37,20 @@
       
       <b-card-text v-show="!activeEdit"> {{ message.content }} </b-card-text>
       
+      <!-- Zone édition du message -->
       <div v-if="activeEdit" v-click-outside="onClickOutside" ref="editMessage" class="d-flex flex-column">
         <input class="w-100 bg-transparent mb-3" type="text" v-model="message.content" @keyup.enter="doneEdit()" @keyup.esc="cancelEdit()" v-focus="message.content === activeEdit">
         <div v-if="activeEdit" class="d-flex mb-3">
-          <b-form-file v-model="newImage" placeholder="Importer une image" class="w-auto flex-grow-1"></b-form-file>
+          <b-form-file 
+            v-model="newImage"
+            placeholder="Importer une image"
+            class="w-auto flex-grow-1"
+            accept=".jpeg, .jpg, .png, .gif"
+          ></b-form-file>
         </div>
-        <div class="d-flex justify-content-end">
-          <b-button v-if="activeEdit && (message.imageurl || newImageSrc)" variant="light" size="sm" @click="deleteImage()">Supprimer l'image<b-icon icon="trash-fill" variant="danger"></b-icon></b-button>
-          <b-button variant="secondary" size="sm" @click="cancelEdit()">Annuler</b-button>
+        <div class="d-flex justify-content-end pb-3">
+          <b-button v-if="activeEdit && (message.imageurl || newImageSrc)" class="mr-2" variant="light" size="sm" @click="deleteImage()">Supprimer l'image<b-icon icon="trash-fill" variant="danger"></b-icon></b-button>
+          <b-button class="mr-2" variant="secondary" size="sm" @click="cancelEdit()">Annuler</b-button>
           <b-button variant="primary" size="sm" @click="doneEdit()">Valider les changements</b-button>
         </div>
       </div>
