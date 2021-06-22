@@ -13,5 +13,5 @@ $navbar-dark-active-color: #D76A71;
 
 // Remove default shadow
 
-$input-btn-focus-box-shadow: none;
-$input-btn-focus-width: 2px;
+$input-btn-focus-box-shadow: 0 0 5px 3px white !default;
+$input-btn-focus-width: 0;

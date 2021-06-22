@@ -40,7 +40,9 @@
               >
               <b-collapse id="collapse-newBirthdate" class="mt-2">
                 <div>
+                  <label class="text-white" for="newBirthdate">Votre date de naissance :</label>
                   <b-form-input
+                    id="newBirthdate"
                     v-model="newBirthdate"
                     type="date"
                   ></b-form-input>
@@ -54,12 +56,12 @@
               >
               <b-collapse id="collapse-newBio" class="mt-2">
                 <div>
+                  <label class="text-white" for="newBio">Votre nouvelle description :</label>
                   <b-form-textarea
-                    id="textarea"
+                    id="newBio"
                     v-model="newBio"
-                    placeholder="Présentez vous en quelques mots ! (Cette description sera visible lorqu'un autre utilisateur cliquera sur votre nom)"
-                    rows="3"
-                    max-rows="6"
+                    placeholder="Présentez vous en quelques mots !"
+                    rows="2"
                   ></b-form-textarea>
                 </div>
               </b-collapse>
@@ -75,7 +77,7 @@
               <b-button block v-b-toggle.collapse-supAccount variant="primary">Supprimer le compte</b-button>
               <b-collapse id="collapse-supAccount" class="mt-2">
                 <div>
-                  <label :for="password" class="text">Entrez le mot de passe et valider la suppression</label>
+                  <label for="password" class="text">Entrez le mot de passe et valider la suppression</label>
                   <b-form-input
                     id="password"
                     v-model="password"

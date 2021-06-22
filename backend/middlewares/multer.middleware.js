@@ -19,4 +19,17 @@ const storage = multer.diskStorage({
   }
 });
 
-module.exports = multer({storage: storage}).single('image');
+const fileFilter = (req, file, cb) => {
+  if ((file.mimetype).includes('jpeg') ||
+    (file.mimetype).includes('png') ||
+    (file.mimetype).includes('jpg') ||
+    (file.mimetype).includes('gif')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Mauvais format d\'image'));
+  }
+};
+
+let upload = multer({ storage: storage, fileFilter: fileFilter, });
+
+module.exports = upload.single('image');

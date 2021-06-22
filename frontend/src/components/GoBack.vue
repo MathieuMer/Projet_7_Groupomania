@@ -1,6 +1,6 @@
 <template>
   <span class="go-back">
-    <b-button size="sm" @click="goBack" variant="secondary"><b-icon icon="arrow-left" variant="primary"></b-icon></b-button>
+    <b-button size="sm" @click="goBack" variant="secondary" aria-label="retour à la page précédente"><b-icon icon="arrow-left" variant="primary"></b-icon></b-button>
   </span>
 </template>
 

@@ -20,6 +20,7 @@
         variant="transparent"
         size="sm"
         @click="deleteComment(comment.id)"
+        aria-label="supprimer-commentaire"
         ><b-icon icon="trash-fill" font-scale="1.2" variant="secondary"></b-icon
       ></b-button>
       <b-button
@@ -28,6 +29,7 @@
         variant="transparent"
         size="sm"
         @click="signalComment(comment.id)"
+        aria-label="signaler-commentaire"
         ><b-icon icon="exclamation-triangle" font-scale="1.2" variant="secondary"></b-icon
       ></b-button>
     </div>

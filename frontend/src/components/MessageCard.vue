@@ -13,18 +13,18 @@
           </div>
           <div class="w-100">
             <p class="m-0 text-right MessageCard__formatDate">{{ formatDate }}</p>
-            <p class="m-0 pl-3 MessageCard__name">
+            <h2 class="m-0 pl-3 MessageCard__name">
               <router-link v-if="message.User.id !== $store.state.userId" :to="{ name: 'User', params: { id: message.User.id }}">{{ message.User.firstname }} {{ message.User.lastname }}</router-link>
               <router-link v-else :to="{ name: 'Me' }">{{ message.User.firstname }} {{ message.User.lastname }}</router-link>
-            </p>
+            </h2>
             <div class="col d-flex justify-content-end align-items-start w-100">
               <!-- Affichage icones modification et suppresion de la publication pour l'auteur du message -->
               <div>
-                <b-button-toolbar aria-label="Toolbar with button groups and dropdown menu">
+                <b-button-toolbar aria-label="Groupe de boutons avec différentes options">
                   <b-button-group class="card__buttons mx-1">
-                    <b-button v-if="(message.User.id === $store.state.userId)" variant="light" size="sm" @click="editMessageContent(message)"><b-icon icon="pen-fill" variant="primary"></b-icon></b-button>
-                    <b-button v-if="(message.User.id === $store.state.userId) || $store.state.isAdmin" variant="light" size="sm" @click="deleteMessage(message.id)"><b-icon icon="trash-fill" variant="danger"></b-icon></b-button>
-                    <b-button v-if="(message.User.id !== $store.state.userId) && !$store.state.isAdmin" variant="light" size="sm" @click="signalMessage(message.id)"><b-icon icon="exclamation-triangle" variant="warning"></b-icon></b-button>
+                    <b-button v-if="(message.User.id === $store.state.userId)" variant="light" size="sm" @click="editMessageContent(message)" aria-label="editer-message"><b-icon icon="pen-fill" variant="primary"></b-icon></b-button>
+                    <b-button v-if="(message.User.id === $store.state.userId) || $store.state.isAdmin" variant="light" size="sm" @click="deleteMessage(message.id)" aria-label="supprimer-message"><b-icon icon="trash-fill" variant="danger"></b-icon></b-button>
+                    <b-button v-if="(message.User.id !== $store.state.userId) && !$store.state.isAdmin" variant="light" size="sm" @click="signalMessage(message.id)" aria-label="signaler-message"><b-icon icon="exclamation-triangle" variant="warning"></b-icon></b-button>
                   </b-button-group>
                 </b-button-toolbar>
               </div>
@@ -61,7 +61,7 @@
 
       <!-- Affichage du nombre de commentaires si il y en a -->
       <div v-if="message.Comments.length >= 1">
-        <p @click="showComments = !showComments" class="py-2 m-0"><span class="showComments">{{numberOfComments}}</span></p>
+        <p class="py-2 m-0"><span tabindex=0 @click="showComments = !showComments" @keyup.enter="showComments = !showComments" class="showComments">{{numberOfComments}}</span></p>
       </div>
 
       <!-- Boucle Affichage Commentaires -->
@@ -74,18 +74,19 @@
       </b-collapse>
 
       <!-- New Comment -->
-      <div class="px-3 pt-3">
-          <b-form inline @submit="submitComment" class="row d-flex justify-content-around">
+      <div class="px-3 pt-0">
+          <b-form  @submit="submitComment" class="row d-flex justify-content-around">
+            <label :for="`new-comment-${message.id}`" class="w-100 text-small text-left">Votre commentaire:</label>
             <b-form-textarea
+            :id="`new-comment-${message.id}`"
             class="col-12"
-            
             v-model="NewComment"
             placeholder="Votre commentaire ici"
-            rows="1"
+            rows="2"
             no-resize
             required
             ></b-form-textarea>
-            <b-button class="col-12 NewComment__button py-1 mt-1" type="submit" variant="primary">Envoyer le commentaire</b-button>
+            <b-button class="col-12 NewComment__button py-1 mt-2" type="submit" variant="primary">Envoyer le commentaire</b-button>
 
           </b-form>
       </div>
@@ -301,10 +302,10 @@ export default {
 .MessageCard {
   background: linear-gradient(
       to right bottom,
-      rgba($color: #ffffff, $alpha: 0.9),
-      rgba($color: #ffffff, $alpha: 0.4),
+      rgba($color: #ffffff, $alpha: 0.5),
+      rgba($color: #ffffff, $alpha: 0.6),
+      rgba($color: #ffffff, $alpha: 0.3),
       rgba($color: #ffffff, $alpha: 0.7),
-      rgba($color: #ffffff, $alpha: 0.4),
       rgba($color: #ffffff, $alpha: 0.7),
       rgba($color: #ffffff, $alpha: 0.5),
       rgba($color: #ffffff, $alpha: 0.8)); 

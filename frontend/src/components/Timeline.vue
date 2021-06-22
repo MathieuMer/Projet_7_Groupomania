@@ -18,12 +18,12 @@
             <b-collapse id="collapse-1" class="mt-2">
               <b-form @submit="postNewMessage" class="Timeline__NewMessage">
                 <!-- Champs texte -->
+                <label class="text-white" for="texte-nouvelle-publication">Texte de la publication:</label>
                 <b-form-textarea
-                  id="textarea"
+                  id="texte-nouvelle-publication"
                   v-model="newMessageContent"
                   placeholder="Texte de la publication"
-                  rows="3"
-                  max-rows="6"
+                  rows="1"
                 ></b-form-textarea>
                 <!-- Champs charger une image avec preview -->
                 <div class="mt-3">
@@ -35,7 +35,15 @@
                   </div>
                   <b-img v-if="hasImage" :src="imageSrc" class="mb-3" fluid block rounded></b-img>
                 </div>
-
+                <p v-if="(this.$store.state.status == 'error: can not create new message') || (newMessageError)" class="text-white">
+                  <b-icon icon="exclamation-triangle" variant="warning"></b-icon> 
+                  Erreur lors de l'upload, vérifier les points suivants :
+                  <ul>
+                    <li>Au moins un texte ou une image</li>
+                    <li>L'image doit être au format .jpeg, .jpg, .png ou .gif</li>
+                    <li>L'image doit doit être inférieure à 3Mo</li>
+                  </ul>
+                </p>
                 <b-button block class="mt-3 mx-auto" type="submit" variant="secondary">Publier</b-button>
               </b-form>
             </b-collapse>
@@ -75,7 +83,8 @@ export default {
         image: null,
         imageSrc: null,
         newMessageContent: '',
-        renderKey: this.$store.state.renderKey
+        renderKey: this.$store.state.renderKey,
+        newMessageError: false
     };
   },
 
@@ -92,6 +101,7 @@ export default {
     image(newValue, oldValue) {
       if (newValue !== oldValue) {
         if (newValue) {
+          this.newMessageError = false;
           base64Encode(newValue)
             .then(value => {
               this.imageSrc = value;
@@ -104,11 +114,13 @@ export default {
         }
       }
     },
-    // renderKey(newValue, oldValue) {
-    //   if (newValue !== oldValue) {
-    //     this.reload();
-    //   }
-    // }
+    newMessageContent(newValue, oldValue) {
+      if (oldValue == '') {
+        if (newValue !== oldValue) {
+          this.newMessageError = false
+        } 
+      }
+    },
   },
 
   methods: {
@@ -125,6 +137,11 @@ export default {
           image: this.image,
           content: this.newMessageContent
       }
+      console.log(data)
+      if (data.image == null && data.content == '') {
+        this.newMessageError = true;
+        return
+      }
       this.$store.dispatch("postNewMessage", data)
       .then(() => {
         this.imageSrc = null;
@@ -133,9 +150,6 @@ export default {
       })
       .catch(err => console.log(err))
     },
-    // reload() {
-    //   this.$forceUpdate();
-    // }
   },
 
   mounted() {

@@ -150,7 +150,7 @@ export default new Vuex.Store({
       state.status = 'success: message sent'
     },
     NEW_MESSAGE_ERROR(state) {
-      state.status = 'error'
+      state.status = 'error: can not create new message'
     },
     DELETE_MESSAGE_REQUEST(state) {
       state.status = 'loading'
