@@ -70,7 +70,7 @@
           </div>        
         </b-form>
 
-        <b-form @submit="deleteUser" class="d-flex flex-column align-items-center mb-3">
+        <b-form class="d-flex flex-column align-items-center mb-3">
           <div class="Me__ModifyProfil mt-3 mx-2 p-3 w-100">
             <p class="text">Attention, la supression du compte est définitive, cela effacera tout les messages et commentaires postés sur le site.</p>
             <div class="mt-3">
@@ -82,8 +82,9 @@
                     id="password"
                     v-model="password"
                     type="password"
+                    required
                   ></b-form-input>
-                  <b-button block class="mt-3 mx-auto" type="submit" variant="secondary">Confirmer la suppression de votre compte</b-button>
+                  <b-button block @click="deleteUser()" class="mt-3 mx-auto" type="button" variant="secondary">Confirmer la suppression de votre compte</b-button>
                 </div>
               </b-collapse>
             </div>
@@ -176,15 +177,22 @@ export default {
       })
       .catch(err => console.log(err))
     },
-    deleteUser(event){
-      event.preventDefault()
-      const data = {
-          password: this.password
-      }
-      this.$store.dispatch("deleteUser", data)
-      .then(() => {
-        this.accountDeleted = !this.accountDeleted // Retarder la redirection pour afficher le message de confirmation de la suppression du compte
-        this.$router.replace("/")
+    deleteUser(){
+      this.$bvModal.msgBoxConfirm('Etes vous sûr de vouloir supprimer Votre compte ?')
+      .then((confirm) => {
+        if(confirm) {
+          const data = {
+            password: this.password
+          }
+          this.$store.dispatch("deleteUser", data)
+          .then(() => {
+            this.accountDeleted = !this.accountDeleted
+            this.$router.replace("/")
+          })
+          .catch(err => console.log(err))
+        } else {
+          return
+        }
       })
       .catch(err => console.log(err))
     }

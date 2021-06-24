@@ -56,16 +56,23 @@ export default {
   },
   methods: {
     deleteComment(commentId) {
-      const data = {
-        commentId: commentId,
-      };
-      console.log(data);
-      this.$store
-        .dispatch("deleteComment", data)
-        .then(() => {
-          this.$store.state.renderKey++;
-        })
-        .catch((err) => console.log(err));
+      this.$bvModal.msgBoxConfirm('Etes vous sûr de vouloir supprimer ce commentaire ?')
+      .then((confirm) => {
+        if(!confirm) {
+          return
+        }
+        const data = {
+          commentId: commentId,
+        };
+        console.log(data);
+        this.$store
+          .dispatch("deleteComment", data)
+          .then(() => {
+            this.$store.state.renderKey++;
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
     },
     signalComment(commentId) {
       const data = {

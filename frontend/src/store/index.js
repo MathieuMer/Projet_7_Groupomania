@@ -46,6 +46,7 @@ export default new Vuex.Store({
 
   getters: {
     isAuthenticated: state => !!state.token,
+    isAdmin: state => state.isAdmin
   },
 
   mutations: {

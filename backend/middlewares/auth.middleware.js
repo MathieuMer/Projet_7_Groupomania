@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
     const userId = decodedToken.userId;
     const isAdmin = decodedToken.isAdmin;
     if (req.body.userId && req.body.userId !== userId) {
-      throw 'Invalid user ID';
+      throw 'User Id invalide !';
     } else {
       // passer les valeurs de userId et isAdmin dans res, pour les récupérer dans les autres middleware et le controleur
       res.locals.userId = userId;
@@ -18,7 +18,7 @@ module.exports = (req, res, next) => {
     }
   } catch {
     res.status(401).json({
-      error: new Error('Invalid request!')
+      error: new Error('Requete non valide !')
     });
   }
 };

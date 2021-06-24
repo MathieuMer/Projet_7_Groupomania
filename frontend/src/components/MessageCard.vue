@@ -39,7 +39,15 @@
       
       <!-- Zone édition du message -->
       <div v-if="activeEdit" v-click-outside="onClickOutside" ref="editMessage" class="d-flex flex-column">
-        <input class="w-100 bg-transparent mb-3" type="text" v-model="message.content" @keyup.enter="doneEdit()" @keyup.esc="cancelEdit()" v-focus="message.content === activeEdit">
+        <b-form-textarea
+            class="w-100 bg-transparent mb-3"
+            v-model="message.content"
+            @keyup.enter="doneEdit()"
+            @keyup.esc="cancelEdit()"
+            v-focus="message.content === activeEdit"
+            max-rows="6"
+            no-resize
+          ></b-form-textarea>
         <div v-if="activeEdit" class="d-flex mb-3">
           <b-form-file 
             v-model="newImage"
@@ -192,15 +200,23 @@ export default {
       this.deleteOld = true;
     },
     deleteMessage(messageId) {
-      const data = {
-        id: messageId
-      };
-      this.$store.dispatch("deleteMessage", data)
-      .then(() => {
-        const userIdinVueX = this.$store.state.userId;
-        this.$store.dispatch("getMessages", userIdinVueX);
+      this.$bvModal.msgBoxConfirm('Etes vous sûr de vouloir supprimer ce message ?')
+      .then((confirm) => {
+        if (!confirm) {
+          return
+        }
+        const data = {
+            id: messageId
+          };
+          this.$store.dispatch("deleteMessage", data)
+          .then(() => {
+            const userIdinVueX = this.$store.state.userId;
+            this.$store.dispatch("getMessages", userIdinVueX);
+          })
+          .catch(err => console.log(err))
       })
       .catch(err => console.log(err))
+      
     },
     signalMessage(messageId) {
       const data = {
@@ -347,6 +363,10 @@ export default {
 .MessageCard__formatDate {
   font-style: italic;
   font-size: 1rem;
+}
+.MessageCard__inputText {
+  height: 100%;
+  
 }
 
 

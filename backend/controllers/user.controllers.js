@@ -1,6 +1,5 @@
 //Imports
 const bcrypt = require('bcryptjs');
-const crypto = require('crypto-js');
 const User = require('../models').User;
 const Message = require('../models').Message;
 const jwt = require('jsonwebtoken');
@@ -8,7 +7,6 @@ const fs = require('fs');
 
 //REGEX Models
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-const PASSWORD_REGEX = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{6,}$/
 
 //Controllers
 exports.signup = (req, res, next) => {
@@ -19,14 +17,11 @@ exports.signup = (req, res, next) => {
     const lastname = req.body.lastname;
     // Verifier si la requête n'est pas nulle
     if (email == null || password == null || firstname == null || lastname == null) {
-        return res.status(400).send({ message: "Les champs Email et Password ne doivent pas être vides" });
+        return res.status(400).send({ message: "Tout les champs doivent être remplis !" });
     };
     // Vérification REGEX pour Email et Password
     if (!EMAIL_REGEX.test(email)) {
         return res.status(400).send({ error: "Format de l'email incorrect" });
-    };
-    if (!PASSWORD_REGEX.test(password)) {
-        return res.status(400).send({ error: "Format du mot de passe incorrect" });
     };
     // Vérifier si l'email existe déjà
     User.findOne({
@@ -64,7 +59,6 @@ exports.login = (req, res, next) => {
         .then((Userfound) => {
             bcrypt.compare(password, Userfound.password)
                 .then(valid => {
-                    console.log("Mot de passe valide :",valid);
                     if (!valid) {
                         return res.status(401).json({ message: 'Mot de passe incorrect !!!!' });
                     } 
@@ -75,12 +69,12 @@ exports.login = (req, res, next) => {
                             avatar: Userfound.avatar,
                             birthdate: Userfound.birthdate,
                             isAdmin: Userfound.isAdmin,
-                            token: jwt.sign({ userId: Userfound.id, isAdmin: Userfound.isAdmin }, process.env.TOKEN_KEY, { expiresIn: '24h' })
+                            token: jwt.sign({ userId: Userfound.id, isAdmin: Userfound.isAdmin }, process.env.TOKEN_KEY, { expiresIn: process.env.TOKEN_VALID })
                     });
                 })
-                .catch((err) => res.status(401).send({ message: 'Mot de passe incorrect !' }));
+                .catch((err) => res.status(401).send({ message: err }));
         })
-        .catch((err) => res.status(400).send({ message: "Utilisateur non trouvé !" }));
+        .catch((err) => res.status(400).send({ message: "Utilisateur non trouvé !" + err }));
 };
 
 exports.getUserProfile = (req, res, next) => {
@@ -90,7 +84,7 @@ exports.getUserProfile = (req, res, next) => {
         where: { id: res.locals.userId }
     })
     .then((user) => { res.status(200).json({ user }) })
-    .catch((err) => res.status(400).send({ message: "Utilisateur non trouvé !" }));
+    .catch((err) => res.status(400).send({ message: "Utilisateur non trouvé !" + err }));
 };
 
 exports.getUserProfileById = (req, res, next) => {

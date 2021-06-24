@@ -1,9 +1,11 @@
 const express = require('express');
 const rateLimit = require("express-rate-limit");
 const router = express.Router();
+const passworValidator = require('../middlewares/passwordValidator.middleware');
 const userCtrl = require('../controllers/user.controllers');
 const multer = require('../middlewares/multer.middleware');
 const auth = require('../middlewares/auth.middleware');
+
 
 //rate-limiter spécifique sur le signup (5 requetes toutes les 30 minutes)
 const signupLimiter = rateLimit({
@@ -14,7 +16,7 @@ const signupLimiter = rateLimit({
 });
 
 //routes users
-router.post('/signup', signupLimiter, userCtrl.signup); // Create account
+router.post('/signup', signupLimiter, passworValidator, userCtrl.signup); // Create account
 router.post('/login', userCtrl.login); // Login
 router.get('/me', auth, userCtrl.getUserProfile); // Voir son propre profil
 router.get('/:id', auth, userCtrl.getUserProfileById); // Voir le profil d'un utilisateur

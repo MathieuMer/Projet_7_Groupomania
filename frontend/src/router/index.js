@@ -29,8 +29,15 @@ const ifAuthenticated = (to, from, next) => {
   next('/')
 }
 
-
-
+// Pour l'accès à la page d'admin
+const ifAdmin = (to, from, next) => {
+  if (store.getters.isAdmin && store.getters.isAuthenticated) {
+    console.log(store.getters.isAdmin)
+    next()
+    return
+  }
+  next('/Home')
+}
 
 
 const routes = [
@@ -67,11 +74,10 @@ const routes = [
     path: '/admin',
     name: 'Admin',
     component: Admin,
-    beforeEnter: ifAuthenticated
+    beforeEnter: ifAdmin
   },
 
   { path: '', component: Login },
-  
   
 ]
 
