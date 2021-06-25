@@ -16,7 +16,6 @@ if (token) {
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
   // Remet l'id et isAdmin dans le store
   const decodedToken = jwt.decode(token);
-  console.log(decodedToken);
   const data = {
     userId: decodedToken.userId,
     isAdmin: decodedToken.isAdmin

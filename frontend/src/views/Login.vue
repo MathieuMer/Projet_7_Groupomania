@@ -59,7 +59,6 @@ export default {
   methods: {
     loginSubmit(event) {
       event.preventDefault()
-      console.log(this.form);
       this.$store.dispatch("login", this.form)
       .then(() => this.$router.push('/Home'))
       .catch(err => {

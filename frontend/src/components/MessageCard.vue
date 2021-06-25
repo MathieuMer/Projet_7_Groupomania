@@ -21,10 +21,10 @@
               <!-- Affichage icones modification et suppresion de la publication pour l'auteur du message -->
               <div>
                 <b-button-toolbar aria-label="Groupe de boutons avec différentes options">
-                  <b-button-group class="card__buttons mx-1">
-                    <b-button v-if="(message.User.id === $store.state.userId)" variant="light" size="sm" @click="editMessageContent(message)" aria-label="editer-message"><b-icon icon="pen-fill" variant="primary"></b-icon></b-button>
-                    <b-button v-if="(message.User.id === $store.state.userId) || $store.state.isAdmin" variant="light" size="sm" @click="deleteMessage(message.id)" aria-label="supprimer-message"><b-icon icon="trash-fill" variant="danger"></b-icon></b-button>
-                    <b-button v-if="(message.User.id !== $store.state.userId) && !$store.state.isAdmin" variant="light" size="sm" @click="signalMessage(message.id)" aria-label="signaler-message"><b-icon icon="exclamation-triangle" variant="warning"></b-icon></b-button>
+                  <b-button-group class="mx-1">
+                    <b-button class="MessageCard__buttons" v-if="(message.User.id === $store.state.userId)" variant="light" size="sm" @click="editMessageContent(message)" aria-label="editer-message"><b-icon icon="pen-fill" variant="primary"></b-icon></b-button>
+                    <b-button class="MessageCard__buttons" v-if="(message.User.id === $store.state.userId) || $store.state.isAdmin" variant="light" size="sm" @click="deleteMessage(message.id)" aria-label="supprimer-message"><b-icon icon="trash-fill" variant="danger"></b-icon></b-button>
+                    <b-button class="MessageCard__buttons" v-if="(message.User.id !== $store.state.userId) && !$store.state.isAdmin" variant="light" size="sm" @click="signalMessage(message.id)" aria-label="signaler-message"><b-icon icon="exclamation-triangle" variant="warning"></b-icon></b-button>
                   </b-button-group>
                 </b-button-toolbar>
               </div>
@@ -99,7 +99,6 @@
           </b-form>
       </div>
 
-
     </b-card>
 </template>
 
@@ -132,7 +131,7 @@ export default {
   data() {
         return {
           Comments: this.message.Comments,
-          showComments: false,
+          showComments: true,
           NewComment: '',
           activeEdit: null,
           oldEdit: null,
@@ -184,7 +183,7 @@ export default {
       this.activeEdit = this.message;
       this.oldEdit = message.content;
       this.oldImage = message.imageurl;
-      //this.$refs.editMessage.focus();
+      this.deleteOld = false;
     },
     cancelEdit() {
       this.message.content = this.oldEdit;
@@ -200,7 +199,17 @@ export default {
       this.deleteOld = true;
     },
     deleteMessage(messageId) {
-      this.$bvModal.msgBoxConfirm('Etes vous sûr de vouloir supprimer ce message ?')
+      this.$bvModal.msgBoxConfirm('Supprimer définitivement ce message ?', {
+        size: 'sm',
+        buttonSize: 'sm',
+        okVariant: 'secondary',
+        cancelVariant: 'primary',
+        okTitle: 'Oui',
+        cancelTitle: 'Non',
+        footerClass: 'p-2',
+        hideHeaderClose: true,
+        centered: true
+      })
       .then((confirm) => {
         if (!confirm) {
           return
@@ -240,7 +249,6 @@ export default {
         content: this.NewComment,
         messageId: this.message.id
       };
-      console.log(data);
       this.$store.dispatch("submitComment", data)
       .then(() => {
         this.NewComment = '';
@@ -254,8 +262,6 @@ export default {
     onClickOutside () {
       this.cancelEdit();
     }
-    
-    
   },
 
   computed: {
@@ -310,7 +316,6 @@ export default {
     },
     clickOutside: vClickOutside.directive,
   },
-
 };
 </script>
 
@@ -333,12 +338,10 @@ export default {
               inset 5px 10px 10px rgba($color: #ffffff, $alpha: 0.5),
               inset -5px -10px 10px rgba($color: #000000, $alpha: 0.4);
 }
-
 .MessageCard__image {
   border-radius: 0.5rem;
   border: 2px solid rgba($color: #000000, $alpha: 0.5);
 }
-
 .MessageCard__name {
   font-weight: bold;
   font-size: 1.2rem;
@@ -352,11 +355,9 @@ export default {
   height: 0.3rem;
   background: #CD424B;
 }
-
 .NewComment__button {
   border-radius: 0 0 2rem 1rem;
 }
-
 .showComments{
   cursor: pointer;
 }
@@ -366,9 +367,19 @@ export default {
 }
 .MessageCard__inputText {
   height: 100%;
-  
 }
-
-
-
+.MessageCard__commentCollapse {
+  max-height: 340px;
+  overflow-y: scroll;
+}
+.MessageCard__commentCollapse::-webkit-scrollbar {
+  width: 5px;
+  height: 8px;
+  border-radius: 5px;
+  background-color: rgba(236, 236, 236, 0.281); /* or add it to the track */
+}
+.MessageCard__commentCollapse::-webkit-scrollbar-thumb {
+    background: rgb(163, 163, 163);
+    border-radius: 5px;
+}
 </style>

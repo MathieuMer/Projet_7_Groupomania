@@ -17,7 +17,7 @@
       <b-button
         class="CommentModule__Button"
         v-if="(comment.User.id === $store.state.userId) || $store.state.isAdmin"
-        variant="transparent"
+        variant="light"
         size="sm"
         @click="deleteComment(comment.id)"
         aria-label="supprimer-commentaire"
@@ -26,11 +26,11 @@
       <b-button
         class="CommentModule__Button"
         v-if="(comment.User.id !== $store.state.userId) && !$store.state.isAdmin"
-        variant="transparent"
+        variant="light"
         size="sm"
         @click="signalComment(comment.id)"
         aria-label="signaler-commentaire"
-        ><b-icon icon="exclamation-triangle" font-scale="1.2" variant="secondary"></b-icon
+        ><b-icon icon="exclamation-triangle" font-scale="1.2" variant="warning"></b-icon
       ></b-button>
     </div>
     <div class="CommentModule__content py-1">
@@ -56,7 +56,17 @@ export default {
   },
   methods: {
     deleteComment(commentId) {
-      this.$bvModal.msgBoxConfirm('Etes vous sûr de vouloir supprimer ce commentaire ?')
+      this.$bvModal.msgBoxConfirm('Supprimer définitivement ce commentaire ?', {
+        size: 'sm',
+        buttonSize: 'sm',
+        okVariant: 'secondary',
+        cancelVariant: 'primary',
+        okTitle: 'Oui',
+        cancelTitle: 'Non',
+        footerClass: 'p-2',
+        hideHeaderClose: true,
+        centered: true
+      })
       .then((confirm) => {
         if(!confirm) {
           return
@@ -64,7 +74,6 @@ export default {
         const data = {
           commentId: commentId,
         };
-        console.log(data);
         this.$store
           .dispatch("deleteComment", data)
           .then(() => {

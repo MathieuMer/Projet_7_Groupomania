@@ -43,7 +43,7 @@
           placeholder="password"
           required
         ></b-form-input>
-        <small id="passwordHelp" class="form-text text-white">6 caractères dont au moins 1 Majuscule et un chiffre</small>
+        <small id="passwordHelp" class="form-text text-white">6 caractères dont au moins 1 majuscule et 1 chiffre</small>
 
         <b-button block class="mt-3 mx-auto" type="submit" variant="secondary"
           >Créer mon compte</b-button

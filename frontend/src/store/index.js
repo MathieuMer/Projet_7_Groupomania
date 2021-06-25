@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 
-// Options de l'instance
+// Creation de l'instance d'axios :
 const defaultOptions = {
   baseURL: 'http://localhost:3000/api/',
   headers: {
@@ -10,7 +10,6 @@ const defaultOptions = {
   },
 };
 
-// Creation de l'instance
 let server = axios.create(defaultOptions);
 
 // Intercepteur qui ajoute le header Authorization sur toutes les requetes
@@ -19,8 +18,6 @@ server.interceptors.request.use(function (config) {
   config.headers.Authorization =  token ? `Bearer ${token}` : '';
   return config;
 });
-
-
 
 Vue.use(Vuex)
 Vue.config.devtools = true;
@@ -255,7 +252,6 @@ export default new Vuex.Store({
         commit('AUTH_REQUEST')
         server({url: 'user/login', data: user, method: 'POST' })
         .then(resp => {
-          console.log(resp);
           commit('AUTH_SUCCESS', resp.data);
           const token = resp.data.token;
           localStorage.setItem('token', token);
@@ -275,13 +271,11 @@ export default new Vuex.Store({
         commit('SET_MESSAGES_REQUEST')
         server({url: 'message/', method: 'GET' })
         .then(resp => {
-          console.log(resp);
           commit('SET_MESSAGES_SUCCESS', resp.data);
           resolve(resp)
         })
         .catch(err => {
           commit('SET_MESSAGE_ERROR')
-          console.log(err)
           reject(err)
         })
       })
@@ -301,7 +295,6 @@ export default new Vuex.Store({
         commit('CREATE_ACCOUNT_REQUEST')
         server({url: 'user/signup', data: user, method: 'POST' })
         .then(resp => {
-          console.log(resp);
           commit('CREATE_ACCOUNT_SUCCESS')
           resolve(resp)
         })
@@ -317,13 +310,11 @@ export default new Vuex.Store({
         commit('SET_USERINFO_REQUEST')
         server({url: 'user/me', method: 'GET' })
         .then(resp => {
-          console.log(resp);
           commit('SET_USERINFO_SUCCESS', resp.data);
           resolve(resp)
         })
         .catch(err => {
           commit('SET_USERINFO_ERROR')
-          console.log(err)
           reject(err)
         })
       })
@@ -336,7 +327,7 @@ export default new Vuex.Store({
         if (data.bio !== null && data.bio !== undefined) {
           form.append('bio', data.bio);
         }
-        if (data.birthdate !== null && data.bio !== undefined) {
+        if (data.birthdate !== null && data.birthdate !== undefined) {
           form.append('birthdate', data.birthdate);
         }
         if (data.image !== null && data.image !== undefined) {
@@ -344,7 +335,6 @@ export default new Vuex.Store({
         }
         server.put('user/me', form, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then(resp => {
-          console.log(resp);
           commit('UPDATE_ACCOUNT_SUCCESS')
           resolve(resp)
         })
@@ -359,7 +349,6 @@ export default new Vuex.Store({
         commit('NEW_COMMENT_REQUEST')
         server({url: 'comment', data: data, method: 'POST' })
         .then(resp => {
-          console.log(resp);
           commit('NEW_COMMENT_SUCCESS')
           resolve(resp)
         })
@@ -374,7 +363,6 @@ export default new Vuex.Store({
         commit('DELETE_COMMENT_REQUEST')
         server({url: 'comment', data: data, method: 'DELETE' })
         .then(resp => {
-          console.log(resp);
           commit('DELETE_COMMENT_SUCCESS')
           resolve(resp)
         })
@@ -389,7 +377,6 @@ export default new Vuex.Store({
         commit('EDIT_COMMENT_REQUEST')
         server({url: 'comment', data: data, method: 'PUT' })
         .then(resp => {
-          console.log(resp);
           commit('EDIT_COMMENT_SUCCESS')
           resolve(resp)
         })
@@ -412,7 +399,6 @@ export default new Vuex.Store({
         }
         server.post('message', form, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then(resp => {
-          console.log(resp);
           commit('NEW_MESSAGE_SUCCESS')
           resolve(resp)
         })
@@ -427,7 +413,6 @@ export default new Vuex.Store({
         commit('DELETE_MESSAGE_REQUEST')
         server({url: 'message', data: data, method: 'DELETE' })
         .then(resp => {
-          console.log(resp);
           commit('DELETE_MESSAGE_SUCCESS')
           resolve(resp)
         })
@@ -442,7 +427,6 @@ export default new Vuex.Store({
         commit('DELETE_USER_REQUEST')
         server({url: 'user/me', data: data, method: 'DELETE' })
         .then(resp => {
-          console.log(resp);
           commit('DELETE_USER_SUCCESS')
           commit('LOGOUT')
           resolve(resp)
@@ -458,7 +442,6 @@ export default new Vuex.Store({
         commit('SIGNAL_MESSAGE_REQUEST')
         server({url: 'message/signal', data: data, method: 'PUT' })
         .then(resp => {
-          console.log(resp);
           commit('SIGNAL_MESSAGE_SUCCESS')
           resolve(resp)
         })
@@ -473,7 +456,6 @@ export default new Vuex.Store({
         commit('SIGNAL_COMMENT_REQUEST')
         server({url: 'comment/signal', data: data, method: 'PUT' })
         .then(resp => {
-          console.log(resp);
           commit('SIGNAL_COMMENT_SUCCESS')
           resolve(resp)
         })
@@ -488,13 +470,11 @@ export default new Vuex.Store({
         commit('GETSIGNALED_COMMENT_REQUEST')
         server({url: 'comment/signal', method: 'GET' })
         .then(resp => {
-          console.log(resp);
           commit('GETSIGNALED_COMMENT_SUCCESS', resp.data);
           resolve(resp)
         })
         .catch(err => {
           commit('GETSIGNALED_COMMENT_ERROR')
-          console.log(err)
           reject(err)
         })
       })
@@ -504,13 +484,11 @@ export default new Vuex.Store({
         commit('GETSIGNALED_MESSAGE_REQUEST')
         server({url: 'message/signal', method: 'GET' })
         .then(resp => {
-          console.log(resp);
           commit('GETSIGNALED_MESSAGE_SUCCESS', resp.data);
           resolve(resp)
         })
         .catch(err => {
           commit('GETSIGNALED_MESSAGE_ERROR')
-          console.log(err)
           reject(err)
         })
       })
@@ -520,7 +498,6 @@ export default new Vuex.Store({
         commit('DELETESIGNAL_COMMENT_REQUEST')
         server({url: 'comment/deletesignal', data: data, method: 'PUT' })
         .then(resp => {
-          console.log(resp);
           commit('DELETESIGNAL_COMMENT_SUCCESS')
           resolve(resp)
         })
@@ -535,7 +512,6 @@ export default new Vuex.Store({
         commit('DELETESIGNAL_MESSAGE_REQUEST')
         server({url: 'message/deletesignal', data: data, method: 'PUT' })
         .then(resp => {
-          console.log(resp);
           commit('DELETESIGNAL_MESSAGE_SUCCESS')
           resolve(resp)
         })
@@ -550,13 +526,11 @@ export default new Vuex.Store({
         commit('GET_OTHERUSERINFO_REQUEST')
         server({url: `user/${id}`, method: 'GET' })
         .then(resp => {
-          console.log(resp);
           commit('GET_OTHERUSERINFO_SUCCESS', resp.data);
           resolve(resp)
         })
         .catch(err => {
           commit('GET_OTHERUSERINFO_ERROR')
-          console.log(err)
           reject(err)
         })
       })
@@ -576,7 +550,6 @@ export default new Vuex.Store({
         }
         server.put('message', form, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then(resp => {
-          console.log(resp);
           commit('EDIT_MESSAGE_SUCCESS')
           resolve(resp)
         })

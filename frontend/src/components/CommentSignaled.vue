@@ -73,7 +73,6 @@ export default {
     const data = {
         commentId: commentId,
       };
-      console.log(data);
       this.$store
         .dispatch("deleteComment", data)
         .then(() => {
@@ -85,7 +84,6 @@ export default {
     const data = {
         commentId: commentId,
       };
-      console.log(data);
       this.$store
         .dispatch("deleteSignalComment", data)
         .then(() => {

@@ -137,7 +137,6 @@ export default {
           image: this.image,
           content: this.newMessageContent
       }
-      console.log(data)
       if (data.image == null && data.content == '') {
         this.newMessageError = true;
         return

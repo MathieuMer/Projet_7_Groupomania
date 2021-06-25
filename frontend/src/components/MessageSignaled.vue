@@ -80,7 +80,6 @@ export default {
     const data = {
         id: messageId,
       };
-      console.log(data);
       this.$store
         .dispatch("deleteMessage", data)
         .then(() => {
@@ -92,7 +91,6 @@ export default {
     const data = {
         id: messageId,
       };
-      console.log(data);
       this.$store
         .dispatch("deleteSignalMessage", data)
         .then(() => {

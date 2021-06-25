@@ -22,7 +22,6 @@ const ifNotAuthenticated = (to, from, next) => {
 // Si User pas authentifié alors redirection vers page login
 const ifAuthenticated = (to, from, next) => {
   if (store.getters.isAuthenticated) {
-    console.log(store.getters.isAuthenticated)
     next()
     return
   }
@@ -32,7 +31,6 @@ const ifAuthenticated = (to, from, next) => {
 // Pour l'accès à la page d'admin
 const ifAdmin = (to, from, next) => {
   if (store.getters.isAdmin && store.getters.isAuthenticated) {
-    console.log(store.getters.isAdmin)
     next()
     return
   }

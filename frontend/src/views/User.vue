@@ -9,20 +9,24 @@
           {{ error }}
         </div>
 
-        <div v-if="user" class="conteneur text-white">
+        <div v-if="user" class="conteneur">
           <b-avatar variant="primary" :src="user.avatar" size="10rem" class="avatar--conteneur mb-3"></b-avatar>
-          <div class="conteneur--top">
+          <div class="conteneur--top px-3">
             <h1 class="conteneur--top__titre text-center">{{ user.firstname }} {{ user.lastname }}</h1>
+            <div  class="conteneur--bottom mt-3 p-3">
+              <p>Date de naissance : <span v-if="user.birthdate">{{ user.birthdate }}</span> <span v-else>Pas encore renseignée</span> </p>
+              <div class="separateur mx-auto my-3"></div>
+              <p>Bio : <span v-if="user.bio">{{ user.bio }}</span> <span v-else>Pas encore renseignée</span> </p>  
+              <div class="separateur mx-auto my-3"></div>
+              <p>{{ user.firstname }} est incrit(e) depuis le {{ formatDate }} et a posté un total de {{ numberOfMessages }}.</p>
+            </div>
+            <div class="text-center mt-3 mb-4">
+              <b-button variant="secondary" :href="`mailto:${user.email}`">Envoyer un email à {{ user.firstname }}</b-button>
+            </div>
           </div>
-          <div  class="conteneur--bottom mt-3 p-3">
-          <p>Date de naissance : <span v-if="user.birthdate">{{ user.birthdate }}</span> <span v-else>Pas encore renseignée</span> </p>
-          <p>Bio : <span v-if="user.bio">{{ user.bio }}</span> <span v-else>Pas encore renseignée</span> </p>  
-          <p>{{ user.firstname }} est incrit depuis le {{ formatDate }} et a posté un total de {{ numberOfMessages }}.</p>
-          </div>
+          
         </div>
-        <div class="text-center mt-3">
-          <b-button variant="secondary" :href="`mailto:${user.email}`">Envoyer un email à {{ user.firstname }}</b-button>
-        </div>
+        
       </b-col>
     </b-row>
   </b-container>
@@ -68,7 +72,6 @@ export default {
         })
         .catch((err) => {
           this.error = err;
-          console.log(err);
         });
     },
   },
@@ -104,19 +107,41 @@ export default {
   top: -5rem;
   left: 50%;
   transform: translateX(-50%);
-  border: 3px solid #CD424B;
+  z-index: 1;
+  box-shadow: 3px -5px 5px rgba($color: #000000, $alpha: 0.5);
 }
 .conteneur--top {
   min-height: 8rem;
-  background-color: #122441;
-  border: 3px solid #CD424B;
-  border-radius: 50% 50% 2rem 2rem;
+  background: linear-gradient(
+      to right bottom,
+      rgba($color: #ffffff, $alpha: 0.5),
+      rgba($color: #ffffff, $alpha: 0.6),
+      rgba($color: #ffffff, $alpha: 0.3),
+      rgba($color: #ffffff, $alpha: 0.7)); 
+  backdrop-filter: blur(5px);
+  z-index: -100;
+  border: 2px solid rgba($color: #ffffff, $alpha: 0.2);
+  box-shadow: 10px 10px 10px rgba($color: #000000, $alpha: 0.5),
+              inset 5px 10px 10px rgba($color: #ffffff, $alpha: 0.5),
+              inset -5px -10px 10px rgba($color: #000000, $alpha: 0.4);
+  border-radius: 2rem;
   &__titre {
-    padding-top : 5rem;
+    padding-top : 6rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #122441;
   }
 }
 .conteneur--bottom {
-  border: 3px solid #CD424B;
-  border-radius: 1rem;
+  background-color: rgba($color: #ffffff, $alpha: 0.3);
+  border-radius: 2rem;
+  box-shadow: inset 3px 15px 10px rgba($color: #ffffff, $alpha: 0.5),
+                inset -3px -5px 10px rgba($color: #000000, $alpha: 0.2);
+}
+.separateur {
+  height: 5px;
+  width: 100px;
+  background-color: #CD424B;
+  box-shadow: 3px -2px 5px rgba($color: #000000, $alpha: 0.5);
 }
 </style>
