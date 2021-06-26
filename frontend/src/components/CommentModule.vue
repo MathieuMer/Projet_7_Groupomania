@@ -119,7 +119,7 @@ export default {
 
 <style lang="scss" scoped>
 .CommentModule {
-    border: 1px solid rgba($color: #ffffff, $alpha: 0.5);
+    border: 1px solid rgba($color: #ffffff, $alpha: 0.2);
     border-radius: 2rem 1rem 2rem 1rem;
     box-shadow: inset 3px 15px 10px rgba($color: #ffffff, $alpha: 0.5),
                 inset -3px -5px 10px rgba($color: #000000, $alpha: 0.2);

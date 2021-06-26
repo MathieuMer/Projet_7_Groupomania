@@ -34,6 +34,10 @@ export default {
 // General style overrides and custom classes
 html, body, .bloc-page {
   min-height: calc(100vh - 66px);
+  font-size: 16px;
+  @media screen and (max-width: 500px) {
+    font-size: 14px;
+  }
 }
 
 body {
